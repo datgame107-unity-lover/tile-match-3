@@ -76,8 +76,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -589213227
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: -2994099740922410003, guid: 84c48381a791ce9458afffa3c3819d8f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -100,8 +100,8 @@ GameObject:
   m_Component:
   - component: {fileID: 776212561200744091}
   - component: {fileID: 7049140844678489526}
-  - component: {fileID: 1142237317112685781}
   - component: {fileID: 872788587661327137}
+  - component: {fileID: 5701336199943700586}
   m_Layer: 0
   m_Name: TIle
   m_TagString: Untagged
@@ -139,14 +139,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed87ddac954574d409ff9099c2e35ca3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileData: {fileID: 0}
+  tileData: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
   worldPos: {x: 0, y: 0, z: 0}
   gridPos: {x: 0, y: 0}
   layer: 0
   isBlocked: 0
   clicked: 0
---- !u!60 &1142237317112685781
-PolygonCollider2D:
+--- !u!50 &872788587661327137
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3822731737702487939}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!58 &5701336199943700586
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -180,65 +207,7 @@ PolygonCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.27874416, y: 0.3899616}
-      - {x: 0.25294608, y: 0.39843646}
-      - {x: 0.17117624, y: 0.4315272}
-      - {x: -0.15784721, y: 0.42621207}
-      - {x: -0.2863965, y: 0.3761302}
-      - {x: -0.3302452, y: 0.3379262}
-      - {x: -0.37679467, y: 0.26121753}
-      - {x: -0.40733397, y: 0.120610744}
-      - {x: -0.40542418, y: -0.16728239}
-      - {x: -0.39509705, y: -0.24100447}
-      - {x: -0.33890477, y: -0.32819843}
-      - {x: -0.24287438, y: -0.41027787}
-      - {x: -0.17031077, y: -0.4295586}
-      - {x: 0.18515527, y: -0.42887914}
-      - {x: 0.23312604, y: -0.4114892}
-      - {x: 0.34215835, y: -0.33715454}
-      - {x: 0.41553614, y: -0.18209636}
-      - {x: 0.41497368, y: 0.14685719}
-      - {x: 0.3875789, y: 0.25160736}
-      - {x: 0.3615811, y: 0.30673233}
-  m_UseDelaunayMesh: 0
---- !u!50 &872788587661327137
-Rigidbody2D:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3822731737702487939}
-  m_BodyType: 2
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 0
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Radius: 0.4522857
 --- !u!1 &3884832695615283001
 GameObject:
   m_ObjectHideFlags: 0
@@ -315,8 +284,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -589213227
+  m_SortingLayer: 2
   m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: f413aa8baf45c1d4c9b69692e97ab865, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -405,8 +374,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: -589213227
+  m_SortingLayer: 2
   m_SortingOrder: 3
   m_Sprite: {fileID: -2994099740922410003, guid: 84c48381a791ce9458afffa3c3819d8f, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.8784314}

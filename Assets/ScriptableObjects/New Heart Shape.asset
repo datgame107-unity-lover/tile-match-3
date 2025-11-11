@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: New Heart Shape
   m_EditorClassIdentifier: Assembly-CSharp::HeartShape
   scale: 2.41
-  tilesPerLayer: 10
+  tilesPerLayer: 4
   layerCount: 4
   allowOverlap: 1
   layerOffset: {x: 0.2, y: 0.2}

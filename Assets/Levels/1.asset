@@ -1,0 +1,255 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f3ce794720e49144a4f907f99e91f2b, type: 3}
+  m_Name: 1
+  m_EditorClassIdentifier: Assembly-CSharp::LevelDataSO
+  tiles:
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: 0.6025, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152825, y: 1.2531022, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.6585405, y: 1.1292444, z: 0}
+    gridPos: {x: 2, y: 1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.65854, y: -0.22885215, z: 0}
+    gridPos: {x: 2, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152813, y: -1.4304947, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: -2.0485, z: 0}
+    gridPos: {x: 0, y: -2}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.3915285, y: -1.4304944, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: -0.22885227, z: 0}
+    gridPos: {x: -2, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: 1.1292447, z: 0}
+    gridPos: {x: -2, y: 1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.39152765, y: 1.2531017, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: 0.6025, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152825, y: 1.2531022, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.6585405, y: 1.1292444, z: 0}
+    gridPos: {x: 2, y: 1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.65854, y: -0.22885215, z: 0}
+    gridPos: {x: 2, y: 0}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152813, y: -1.4304947, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: -2.0485, z: 0}
+    gridPos: {x: 0, y: -2}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.3915285, y: -1.4304944, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: -0.22885227, z: 0}
+    gridPos: {x: -2, y: 0}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: 1.1292447, z: 0}
+    gridPos: {x: -2, y: 1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.39152765, y: 1.2531017, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 1
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: 0.6025, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152825, y: 1.2531022, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.6585405, y: 1.1292444, z: 0}
+    gridPos: {x: 2, y: 1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.65854, y: -0.22885215, z: 0}
+    gridPos: {x: 2, y: 0}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152813, y: -1.4304947, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: -2.0485, z: 0}
+    gridPos: {x: 0, y: -2}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.3915285, y: -1.4304944, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: -0.22885227, z: 0}
+    gridPos: {x: -2, y: 0}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: 1.1292447, z: 0}
+    gridPos: {x: -2, y: 1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.39152765, y: 1.2531017, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 2
+    isBlocked: 1
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: 0.6025, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152825, y: 1.2531022, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.6585405, y: 1.1292444, z: 0}
+    gridPos: {x: 2, y: 1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 1.65854, y: -0.22885215, z: 0}
+    gridPos: {x: 2, y: 0}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0.39152813, y: -1.4304947, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: 0, y: -2.0485, z: 0}
+    gridPos: {x: 0, y: -2}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.3915285, y: -1.4304944, z: 0}
+    gridPos: {x: 0, y: -1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: -0.22885227, z: 0}
+    gridPos: {x: -2, y: 0}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -1.6585401, y: 1.1292447, z: 0}
+    gridPos: {x: -2, y: 1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0
+  - tile: {fileID: 0}
+    worldPos: {x: -0.39152765, y: 1.2531017, z: 0}
+    gridPos: {x: 0, y: 1}
+    layer: 3
+    isBlocked: 0
+    clicked: 0

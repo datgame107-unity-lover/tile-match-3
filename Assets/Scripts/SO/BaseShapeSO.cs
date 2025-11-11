@@ -5,7 +5,7 @@ public abstract class BaseShapeSO : ScriptableObject
     [Header("Shape Setup")]
     public float scale = 1f;
 
-    [Header("Layer Settings")]
+    [Header("Layer Settings")]  
     public int tilesPerLayer = 10;
     public int layerCount = 1;
 

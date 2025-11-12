@@ -37,7 +37,7 @@ public class SceneLoader : MonoBehaviour
         while (!operation.isDone)
         {
             // target progress (0 -> 1)
-            float targetValue = Mathf.Clamp01(operation.progress / 0.9f);
+            float targetValue = Mathf.Clamp01(operation.progress / 0.2f);
 
             // Lerp chậm cho mượt
             displayedProgress = Mathf.MoveTowards(displayedProgress, targetValue, Time.deltaTime * 0.5f);
@@ -45,7 +45,7 @@ public class SceneLoader : MonoBehaviour
 
             if (operation.progress >= 0.9f && displayedProgress >= 0.99f)
             {
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.2f);
                 operation.allowSceneActivation = true;
             }
 

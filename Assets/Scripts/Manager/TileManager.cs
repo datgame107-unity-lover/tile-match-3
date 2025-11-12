@@ -1,30 +1,40 @@
-﻿using NUnit.Framework;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 
 public class TileManager : MonoBehaviour
 {
-    public int maxSeletableTile = 8;
-    List<Tile> currentTiles;
-    List<Tile> selectingTiles;
+    [Header("Settings")]
+    public int maxSeletableTile = 9;
+
+    [HideInInspector] public List<Tile> currentTiles;
+    [HideInInspector] public List<Tile> selectingTiles;
+    public AudioClip clickSoundClip;
     private Tile currentHoveredTile;
+    private IGameModeHandler modeHandler;
+
     private void Start()
     {
-        print(PlayerPrefs.GetInt("level"));
-        GenerateNewLevel(PlayerPrefs.GetInt("level"));
+        print($"Current Level: {PlayerPrefs.GetInt("level")}");
+        GenerateNewGame(GameManager.instance.gameMode);
+
         currentTiles = GetComponentsInChildren<Tile>().ToList();
         selectingTiles = new List<Tile>();
 
+        // Gán handler theo mode hiện tại
+        switch (GameManager.instance.gameMode)
+        {
+            case GameMode.Level:
+                modeHandler = new LevelModeHandler(this);
+                break;
+            case GameMode.Infinite:
+                modeHandler = new InfiniteModeHandler(this);
+                break;
+        }
     }
-    private void LateUpdate()
-    {
-        SortTiles();
-        ActivateShadows();
-    }
+
     private void OnEnable()
     {
         EventManager.OnContinueButtonClicked += HandleContinueLevel;
@@ -35,10 +45,12 @@ public class TileManager : MonoBehaviour
         EventManager.OnContinueButtonClicked -= HandleContinueLevel;
     }
 
-    private void HandleContinueLevel()
+    private void LateUpdate()
     {
-        GenerateNewLevel(PlayerPrefs.GetInt("level"));
+        SortTiles();
+        ActivateShadows();
     }
+
     private void Update()
     {
         if (GameManager.instance.currentState != GameState.Playing) return;
@@ -49,21 +61,20 @@ public class TileManager : MonoBehaviour
         {
             if (tile != currentHoveredTile)
             {
-                // Nếu có tile cũ, nhỏ lại
+                // Nhỏ lại tile cũ
                 if (currentHoveredTile != null)
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform, 1f); // trở về scale 1
+                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container").transform, 1f);
 
                 currentHoveredTile = tile;
 
-                // Nếu tile mới hợp lệ, scale bự
+                // Phóng to tile mới
                 if (currentHoveredTile != null && !currentHoveredTile.isBlocked)
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform, 1.2f);
+                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container").transform.transform, 1.2f);
             }
 
-            // Nếu không còn tile dưới chuột, nhỏ lại tile hiện tại
             if (tile == null && currentHoveredTile != null)
             {
-                DOAnimationManager.ScaleBounce(currentHoveredTile.transform, 1f);
+                DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container").transform.transform, 1f);
                 currentHoveredTile = null;
             }
         }
@@ -73,10 +84,48 @@ public class TileManager : MonoBehaviour
             if (currentHoveredTile != null && !currentHoveredTile.isBlocked)
             {
                 SelectTile(currentHoveredTile);
-                DOAnimationManager.ScaleBounce(currentHoveredTile.transform, 1f); // nhỏ lại
+                DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container").transform.transform, 1f);
                 currentHoveredTile = null;
             }
         }
+    }
+
+    private void HandleContinueLevel()
+    {
+        GenerateNewGame(GameMode.Level);
+    }
+
+    // 🔹 Sinh map mới tùy theo mode
+    public void GenerateNewGame(GameMode gameMode)
+    {
+        switch (gameMode)
+        {
+            default:
+            case GameMode.Level:
+                GenerateNewLevel(GameManager.instance.level);
+                break;
+            case GameMode.Infinite:
+                GenerateInfiniteTile(4);
+                break;
+        }
+    }
+
+    private void GenerateInfiniteTile(int maxLayer)
+    {
+        for (int i = 0; i < maxLayer - 1; i++)
+        {
+            LevelManager.Instance.GenerateOneLayer(i, 21);
+
+            SortTiles();
+            ActivateShadows();
+        }
+    }
+
+    private void GenerateNewLevel(int level)
+    {
+        LevelManager.Instance.LoadFromSO(level);
+        currentTiles = GetComponentsInChildren<Tile>().ToList();
+        GameManager.instance.ChangeState(GameState.Playing);
     }
 
     private Tile GetTopTileUnderMouse()
@@ -102,34 +151,48 @@ public class TileManager : MonoBehaviour
 
     private void SelectTile(Tile tile)
     {
+        modeHandler.OnTileSelected(tile);
+        SoundManager.Instance.PlaySFX(clickSoundClip, 1f);
+    }
+    public void SortTileAndActivateShadow(List<Tile> newTiles)
+    {
+        SortTiles();
+        ActivateShadows();
+        currentTiles.AddRange(newTiles);
+
+        
+    }
+    // 🔹 Logic chọn tile mặc định
+    public void DefaultSelectLogic(Tile tile)
+    {
         if (selectingTiles.Count >= maxSeletableTile)
         {
             GameManager.instance.ChangeState(GameState.Lose);
             return;
         }
+
         selectingTiles.Add(tile);
-        print("hehe");
         tile.gameObject.SetActive(false);
+
+        // Ưu tiên sắp xếp tile cùng loại
         for (int i = selectingTiles.Count - 2; i >= 0; i--)
         {
             if (selectingTiles[i].tileData == tile.tileData)
             {
                 for (int j = selectingTiles.Count - 1; j > i + 1; j--)
-                {
                     (selectingTiles[j], selectingTiles[j - 1]) = (selectingTiles[j - 1], selectingTiles[j]);
-                }
                 break;
             }
-
         }
+
         EventManager.OnTileSelected?.Invoke(tile);
         CheckMatch3Condition(tile.tileData);
     }
 
-    private void CheckMatch3Condition(TileDataSO tileDataSO)
+    // 🔹 Kiểm tra match 3
+    public void CheckMatch3Condition(TileDataSO tileDataSO)
     {
-        if (selectingTiles.Count < 3)
-            return;
+        if (selectingTiles.Count < 3) return;
 
         for (int i = 0; i < selectingTiles.Count - 2; i++)
         {
@@ -148,30 +211,19 @@ public class TileManager : MonoBehaviour
                     Destroy(tile.gameObject);
                 }
 
-                // Gọi sự kiện
-                EventManager.OnTileRemoved?.Invoke(tileDataSO);
-                break; // Dừng sau khi xoá match đầu tiên
+                modeHandler.OnTilesMatched(tileDataSO);
+                break;
             }
         }
-        if (currentTiles.Count == 0 && selectingTiles.Count == 0)
-        {
-            StartCoroutine(Win());
-        }
+
+        modeHandler.OnWinCheck(currentTiles, selectingTiles);
     }
 
-    private void GenerateNewLevel(int level)
-    {
-        LevelManager.Instance.LoadFromSO(level);
-        currentTiles = GetComponentsInChildren<Tile>().ToList();
-        GameManager.instance.ChangeState(GameState.Playing);
-    }
-
-
-    private IEnumerator Win()
+    // 🔹 Coroutine thắng level
+    public IEnumerator Win()
     {
         yield return new WaitForSeconds(0.3f);
         GameManager.instance.ChangeState(GameState.Win);
-
     }
 
     private void SortTiles()
@@ -182,7 +234,7 @@ public class TileManager : MonoBehaviour
 
             int baseOrder = tile.layer * 10;
 
-            foreach (var renderer in tile.GetComponentsInChildren<SpriteRenderer>())
+            foreach (var renderer in tile.transform.Find("Container").GetComponentsInChildren<SpriteRenderer>())
             {
                 if (renderer.name == "Shadow")
                     renderer.sortingOrder = baseOrder + 2;
@@ -191,13 +243,13 @@ public class TileManager : MonoBehaviour
                 else if (renderer.name == "Food")
                     renderer.sortingOrder = baseOrder + 1;
                 else
-                    renderer.sortingOrder = baseOrder; // default
+                    renderer.sortingOrder = baseOrder;
             }
         }
     }
+
     private void ActivateShadows()
     {
-
         foreach (Tile tile in currentTiles)
         {
             if (tile == null) continue;
@@ -206,7 +258,6 @@ public class TileManager : MonoBehaviour
             if (tileCollider == null) continue;
 
             List<Collider2D> results = new List<Collider2D>();
-
             int hitCount = tileCollider.Overlap(ContactFilter2D.noFilter, results);
 
             bool showShadow = false;
@@ -220,16 +271,10 @@ public class TileManager : MonoBehaviour
                     break;
                 }
             }
-            if (!showShadow)
-            {
-                tile.isBlocked = false;
-            }
-            else
-            {
-                tile.isBlocked = true;
-            }
-            // Bật hoặc tắt shadow
-            var shadow = tile.transform.Find("Shadow")?.GetComponent<SpriteRenderer>();
+
+            tile.isBlocked = showShadow;
+
+            var shadow = tile.transform.Find("Container/Shadow")?.GetComponent<SpriteRenderer>();
             if (shadow != null)
                 shadow.enabled = showShadow;
         }

@@ -9,10 +9,16 @@ public enum GameState
     Win,
     Creating,
 }
+public enum GameMode
+{
+    Level,
+    Infinite
+}
 public class GameManager : MonoBehaviour
 {   
     public static GameManager instance;
     public GameState currentState { get; private set; }
+    public GameMode gameMode { get; private set; }
     public int level;
 
     private void Awake()
@@ -97,7 +103,10 @@ public class GameManager : MonoBehaviour
     private void HandleLose()
     {
     }
-
+    public void ChangeMode(GameMode mode)
+    {
+        this.gameMode = mode;
+    }
     public void SaveLevel(int newLevel)
     {
         level = newLevel;

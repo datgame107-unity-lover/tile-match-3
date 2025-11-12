@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public enum SwitchType
 {
@@ -16,84 +17,90 @@ public class SettingUI : MonoBehaviour
     public Slider vibrationSwitch;
     public Slider musicSwitch;
     public Button homeButton;
+    public Button supportButton;
+    public Button OverlayButton; // overlay full screen
+    public RectTransform container; // vùng UI chính
+
     private void OnEnable()
     {
-        // Gán listener cho từng switch
+        // Gán listener
         soundSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Sound, value));
         vibrationSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Vibration, value));
         musicSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Music, value));
-        homeButton.onClick.AddListener(() => HomeButtonClick());
-        // Cập nhật trạng thái khi mở Setting
-        LoadSwitchState(soundSwitch, SwitchType.Sound);
-        LoadSwitchState(vibrationSwitch, SwitchType.Vibration);
-        LoadSwitchState(musicSwitch, SwitchType.Music);
+
+        if (homeButton != null)
+            homeButton.onClick.AddListener(HomeButtonClick);
+        if (supportButton != null)
+            supportButton.onClick.AddListener(SupportButtonClick);
+
+        // Overlay click — chỉ tắt nếu click ngoài container
+        OverlayButton.onClick.AddListener(() =>
+        {
+            Vector2 mousePos = Input.mousePosition;
+            // Kiểm tra nếu click nằm ngoài container thì tắt
+            if (!RectTransformUtility.RectangleContainsScreenPoint(container, mousePos, null))
+            {
+                this.gameObject.SetActive(false);
+            }
+        });
+
+        // Load trạng thái mà không kích hoạt sự kiện
+        LoadSwitchState();
     }
 
     private void OnDisable()
     {
-        // Gỡ listener tránh memory leak
         soundSwitch.onValueChanged.RemoveAllListeners();
         vibrationSwitch.onValueChanged.RemoveAllListeners();
         musicSwitch.onValueChanged.RemoveAllListeners();
+        OverlayButton.onClick.RemoveAllListeners();
+        homeButton?.onClick.RemoveAllListeners();
+        supportButton?.onClick.RemoveAllListeners();
     }
 
-    private void LoadSwitchState(Slider slider, SwitchType type)
+    private void LoadSwitchState()
     {
-        bool isOn = PlayerPrefs.GetInt(type.ToString(), 1) == 1;
-        slider.value = isOn ? 1 : 0;
+        if (SoundManager.Instance == null) return;
+
+        // Dùng SetValueWithoutNotify để không gọi HandleSwitchChanged
+        soundSwitch.SetValueWithoutNotify(SoundManager.Instance.sfxOn ? 1 : 0);
+        musicSwitch.SetValueWithoutNotify(SoundManager.Instance.musicOn ? 1 : 0);
+
+        // Giả sử có lưu vibration ở PlayerPrefs
+        vibrationSwitch.SetValueWithoutNotify(PlayerPrefs.GetInt("vibration", 1));
     }
-    public void HomeButtonClick()
-    {
-        SceneLoader.TargetScene = SceneEnum.Home; // đặt scene muốn load
-        SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
-    }
+
     private void HandleSwitchChanged(SwitchType type, float value)
     {
         bool isOn = value > 0.5f;
-        PlayerPrefs.SetInt(type.ToString(), isOn ? 1 : 0);
-        PlayerPrefs.Save();
 
         switch (type)
         {
             case SwitchType.Sound:
-                HandleSound(isOn);
+                SoundManager.Instance.SetSFX(isOn);
                 break;
 
             case SwitchType.Vibration:
-                HandleVibration(isOn);
+                PlayerPrefs.SetInt("vibration", isOn ? 1 : 0);
+#if UNITY_ANDROID || UNITY_IOS
+                if (isOn) Handheld.Vibrate();
+#endif
                 break;
 
             case SwitchType.Music:
-                HandleMusic(isOn);
+                SoundManager.Instance.SetMusic(isOn);
                 break;
         }
     }
 
-    private void HandleSound(bool isOn)
+    public void HomeButtonClick()
     {
-        AudioListener.volume = isOn ? 1f : 0f;
-        Debug.Log($"Sound: {(isOn ? "ON" : "OFF")}");
+        SceneLoader.TargetScene = SceneEnum.Home;
+        SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
     }
 
-    private void HandleVibration(bool isOn)
+    public void SupportButtonClick()
     {
-#if UNITY_ANDROID || UNITY_IOS
-        if (isOn)
-            Handheld.Vibrate(); // test rung khi bật
-#endif
-        Debug.Log($"Vibration: {(isOn ? "ON" : "OFF")}");
-    }
-
-    private void HandleMusic(bool isOn)
-    {
-        AudioSource bgm = GameObject.FindWithTag("BGM")?.GetComponent<AudioSource>();
-        if (bgm)
-        {
-            if (isOn && !bgm.isPlaying)
-                bgm.Play();
-            else if (!isOn && bgm.isPlaying)
-                bgm.Pause();
-        }
-        Debug.Log($"Music: {(isOn ? "ON" : "OFF")}");
+        // TODO: xử lý nút Support
     }
 }

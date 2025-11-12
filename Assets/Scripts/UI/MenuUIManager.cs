@@ -1,4 +1,5 @@
 ﻿using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -11,7 +12,9 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [SerializeField] private int menuCount = 3;
     [SerializeField] private float tweenDuration = 0.35f;
     [SerializeField] private Button playButton;
-
+    [SerializeField] private Button chaneModeButton;
+    [SerializeField] private Button settingButton;
+    [SerializeField] private GameObject settingUI;
     private int currentIndex = 1    ;
 
     private void Start()
@@ -24,9 +27,47 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
             SceneLoader.TargetScene = SceneEnum.GameScene;
             SceneManager.LoadScene(SceneEnum.Loading.ToString(),LoadSceneMode.Single);
         });
+        chaneModeButton.onClick.AddListener(() =>
+        {
+            ChangeMode();
+        });
 
+        settingButton.onClick.AddListener(() =>
+        {
+            settingUI.SetActive(!settingUI.activeSelf);
+        });
     }
+    private void ChangeMode()
+    {
+        GameMode currentMode = GameManager.instance.gameMode;
+        // Đổi chế độ
+        currentMode = currentMode == GameMode.Level ? GameMode.Infinite : GameMode.Level;
 
+        GameManager.instance.ChangeMode(currentMode);
+        // Lấy component text
+        TextMeshProUGUI buttonText = chaneModeButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        // Gán text hiển thị
+        buttonText.text = currentMode.ToString();
+
+        // Đổi màu button và màu text tương ứng
+        if (currentMode == GameMode.Level)
+        {
+            // Chế độ Level
+            ColorUtility.TryParseHtmlString("#51DA4D", out Color bgColor);
+            ColorUtility.TryParseHtmlString("#F5F5F5", out Color textColor);
+            chaneModeButton.image.color = bgColor;
+            buttonText.color = textColor;
+        }
+        else
+        {
+            // Chế độ Infinite (màu khác khi đổi)
+            ColorUtility.TryParseHtmlString("#3B82F6", out Color bgColor); // xanh dương
+            ColorUtility.TryParseHtmlString("#FFFFFF", out Color textColor); // trắng
+            chaneModeButton.image.color = bgColor;
+            buttonText.color = textColor;
+        }
+    }
     public void OnBeginDrag(PointerEventData eventData)
     {
     }

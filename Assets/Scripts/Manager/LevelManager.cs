@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
-{   
+{
     public static LevelManager Instance;
 
 
@@ -32,10 +32,10 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if (Instance == null)
         {
             Instance = this;
-        }    
+        }
         else
         {
             Destroy(gameObject);
@@ -73,8 +73,8 @@ public class LevelManager : MonoBehaviour
             .ToList();
 
         int maxLevel = levelNumbers.Max();
-        if(levelInput!=null)    
-        levelInput.text = maxLevel.ToString();
+        if (levelInput != null)
+            levelInput.text = maxLevel.ToString();
         Debug.Log($"📘 Level cao nhất: {maxLevel}");
 #else
         levelInput.text = "0";
@@ -146,8 +146,8 @@ public class LevelManager : MonoBehaviour
                 tile.gridPos = Vector2Int.RoundToInt(basePos);
                 tile.isBlocked = layer != shape.layerCount - 1;
 
-                tile.tileData = randomDataList[index];  
-                tile.transform.Find("Food").GetComponent<SpriteRenderer>().sprite = tile.tileData.sprite;
+                tile.tileData = randomDataList[index];
+                tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tile.tileData.sprite;
                 createdThisLayer.Add(tile);
                 index++;
             }
@@ -167,48 +167,145 @@ public class LevelManager : MonoBehaviour
         foreach (Transform t in children)
             DestroyImmediate(t.gameObject);
     }
-   
+
     private void ResolveOverlapUsingCircleCollider(List<Tile> tiles)
     {
-        for (int iter = 0; iter < resolveIterations; iter++)
+        float padding = 0.05f; // bù nhỏ để tránh chạm nhẹ
+
+        // Nhóm tile theo layer
+        var tilesByLayer = tiles.GroupBy(t => t.layer);
+
+        foreach (var layerGroup in tilesByLayer)
         {
-            bool movedAny = false;
+            List<Tile> layerTiles = layerGroup.ToList();
 
-            for (int i = 0; i < tiles.Count; i++)
+            for (int iter = 0; iter < resolveIterations; iter++)
             {
-                for (int j = i + 1; j < tiles.Count; j++)
+                bool movedAny = false;
+
+                for (int i = 0; i < layerTiles.Count; i++)
                 {
-                    var col1 = tiles[i].GetComponent<CircleCollider2D>();
-                    var col2 = tiles[j].GetComponent<CircleCollider2D>();
-                    if (col1 == null || col2 == null)
-                        continue;
-
-                    Vector2 pos1 = col1.bounds.center;
-                    Vector2 pos2 = col2.bounds.center;
-
-                    float radiusSum = col1.bounds.extents.x + col2.bounds.extents.x;
-                    float dist = Vector2.Distance(pos1, pos2);
-                    float minDist = radiusSum * minDistanceMultiplier;
-
-                    if (dist < minDist)
+                    for (int j = i + 1; j < layerTiles.Count; j++)
                     {
-                        Vector2 direction = (pos2 - pos1).normalized;
-                        if (direction == Vector2.zero)
-                            direction = Vector2.right;
+                        var col1 = layerTiles[i].GetComponent<CircleCollider2D>();
+                        var col2 = layerTiles[j].GetComponent<CircleCollider2D>();
+                        if (col1 == null || col2 == null)
+                            continue;
 
-                        float overlap = (minDist - dist) / 2f;
-                        col1.transform.position -= (Vector3)(direction * overlap);
-                        col2.transform.position += (Vector3)(direction * overlap);
-                        movedAny = true;
+                        Vector2 pos1 = col1.bounds.center;
+                        Vector2 pos2 = col2.bounds.center;
+
+                        float radius1 = col1.radius * Mathf.Max(col1.transform.lossyScale.x, col1.transform.lossyScale.y);
+                        float radius2 = col2.radius * Mathf.Max(col2.transform.lossyScale.x, col2.transform.lossyScale.y);
+
+                        float minDist = (radius1 + radius2) * minDistanceMultiplier + padding;
+                        float dist = Vector2.Distance(pos1, pos2);
+
+                        if (dist < minDist)
+                        {
+                            Vector2 direction = (pos2 - pos1).normalized;
+                            if (direction == Vector2.zero)
+                                direction = Vector2.right;
+
+                            float overlap = (minDist - dist) / 2f;
+                            col1.transform.position -= (Vector3)(direction * overlap);
+                            col2.transform.position += (Vector3)(direction * overlap);
+                            movedAny = true;
+                        }
                     }
                 }
-            }
 
-            if (!movedAny) break;
+                if (!movedAny) break;
+            }
         }
     }
 
- 
+
+
+    public List<Tile> GenerateOneLayer(int layer, int count)
+    {
+        List<Tile> generatedTiles = new();
+        if (tilePrefab == null)
+        {
+            Debug.LogWarning("⚠️ Thiếu tilePrefab trong LevelManager!");
+        }
+
+        if (tileDatas == null || tileDatas.Length == 0)
+        {
+            Debug.LogWarning("⚠️ Chưa gán TileDataSO trong LevelManager!");
+        }
+
+        if (autoClearOldTiles && layer == 0)
+            ClearGeneratedTiles();
+
+        List<Tile> createdThisLayer = new List<Tile>();
+
+        Camera cam = Camera.main;
+        float camHeight = cam.orthographicSize * 2f;
+        float camWidth = camHeight * cam.aspect;
+
+        float marginX = 1.5f;
+        float marginTop = 2f;
+        float marginBottom = 2.5f;
+
+        float minX = -camWidth / 2f + marginX;
+        float maxX = camWidth / 2f - marginX;
+        float minY = -camHeight / 2f + marginBottom;
+        float maxY = camHeight / 2f - marginTop;
+
+        float minDistance = 1f; // khoảng cách tối thiểu giữa các tile
+
+        int attempts = 0;
+        int maxAttempts = count * 10; // tránh vòng lặp vô hạn
+
+        while (createdThisLayer.Count < count && attempts < maxAttempts)
+        {
+            attempts++;
+            Vector2 randomPos = new Vector2(
+                Random.Range(minX, maxX),
+                Random.Range(minY, maxY)
+            );
+
+            // kiểm tra khoảng cách với tất cả tile đã tạo
+            bool tooClose = false;
+            foreach (var t in createdThisLayer)
+            {
+                if (Vector2.Distance(t.transform.position, randomPos) < minDistance)
+                {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (tooClose) continue;
+
+            GameObject tileObj = Instantiate(tilePrefab, randomPos, Quaternion.identity, transform);
+            Tile tile = tileObj.GetComponent<Tile>();
+
+            tile.layer = layer;
+            tile.worldPos = randomPos;
+            tile.gridPos = Vector2Int.RoundToInt(randomPos);
+            tile.isBlocked = false;
+
+            TileDataSO randomData = tileDatas[Random.Range(0, tileDatas.Length)];
+            tile.tileData = randomData;
+            generatedTiles.Add(tile);
+            Transform food = tile.transform.Find("Container/Food");
+            if (food != null)
+            {
+                var renderer = food.GetComponent<SpriteRenderer>();
+                if (renderer != null)
+                    renderer.sprite = randomData.sprite;
+            }
+
+            createdThisLayer.Add(tile);
+        }
+
+        Debug.Log($"✅ Đã tạo {createdThisLayer.Count}/{count} tile cho layer {layer} mà không overlap.");
+        return generatedTiles;
+    }
+
+
     public void SaveToSO()
     {
 #if UNITY_EDITOR
@@ -279,22 +376,22 @@ public class LevelManager : MonoBehaviour
                 continue;
             }
 
-            tile.tileData = tileSave.tile;  
+            tile.tileData = tileSave.tile;
             tile.worldPos = tileSave.worldPos;
             tile.gridPos = tileSave.gridPos;
             tile.layer = tileSave.layer;
             tile.isBlocked = tileSave.isBlocked;
             tile.isClicked = tileSave.clicked;
-            tile.transform.Find("Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
+            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
         }
 
-      
+
         Debug.Log($"✅ Load Level thành công từ {fileName}");
 #else
     Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
 #endif
     }
-    public  void LoadFromSO(int level)
+    public void LoadFromSO(int level)
     {
 #if UNITY_EDITOR
         ClearGeneratedTiles();
@@ -334,7 +431,7 @@ public class LevelManager : MonoBehaviour
             tile.layer = tileSave.layer;
             tile.isBlocked = tileSave.isBlocked;
             tile.isClicked = tileSave.clicked;
-            tile.transform.Find("Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
+            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
         }
 
 

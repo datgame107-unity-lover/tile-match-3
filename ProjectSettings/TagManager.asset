@@ -50,5 +50,8 @@ TagManager:
   - name: UI
     uniqueID: 1802639011
     locked: 0
+  - name: DraggableTile
+    uniqueID: 3564675089
+    locked: 0
   m_RenderingLayers:
   - Default

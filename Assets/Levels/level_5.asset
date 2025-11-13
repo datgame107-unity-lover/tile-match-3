@@ -10,18 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f3ce794720e49144a4f907f99e91f2b, type: 3}
-  m_Name: level_3
+  m_Name: level_5
   m_EditorClassIdentifier: Assembly-CSharp::LevelDataSO
-  tiles:
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -0, y: -1, z: 0}
-    gridPos: {x: 0, y: -1}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: 0, y: 1, z: 0}
-    gridPos: {x: 0, y: 1}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
+  tiles: []

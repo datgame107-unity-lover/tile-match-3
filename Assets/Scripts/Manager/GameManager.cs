@@ -32,9 +32,10 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-        if (PlayerPrefs.GetInt("level") == 0) PlayerPrefs.SetInt("level", 1);
-        PlayerPrefs.Save();
-        level = PlayerPrefs.GetInt("level");
+        PlayerPrefs.SetInt("level", level);
+        //if (PlayerPrefs.GetInt("level") == 0) PlayerPrefs.SetInt("level", 1);
+        //PlayerPrefs.Save();
+        //level = PlayerPrefs.GetInt("level");
         DontDestroyOnLoad(instance);
        
     }

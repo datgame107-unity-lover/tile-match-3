@@ -8,7 +8,7 @@ using UnityEngine;
 public class LevelManager : MonoBehaviour
 {
     public static LevelManager Instance;
-
+    
 
 
     [Header("Shape Config")]
@@ -26,10 +26,10 @@ public class LevelManager : MonoBehaviour
     public float minDistanceMultiplier = 0.9f;
     public bool useRendererBoundsForSpacing = true;
 
-    public TMP_InputField levelInput;
     public TileDataSO[] tileDatas;
-
-
+    public Transform grid;
+    public int selectingLevel;
+    public int maxLevel;
     private void Awake()
     {
         if (Instance == null)
@@ -43,12 +43,12 @@ public class LevelManager : MonoBehaviour
     }
     private void Start()
     {
+        selectingLevel = PlayerPrefs.GetInt("level");
 #if UNITY_EDITOR
         string folderPath = "Assets/Levels";
         if (!Directory.Exists(folderPath))
         {
             Debug.LogWarning("📁 Thư mục Assets/Levels chưa tồn tại!");
-            levelInput.text = "1";
             return;
         }
 
@@ -57,7 +57,6 @@ public class LevelManager : MonoBehaviour
         if (files.Length == 0)
         {
             Debug.Log("⚠️ Không có level nào được lưu!");
-            levelInput.text = "0";
             return;
         }
 
@@ -72,9 +71,7 @@ public class LevelManager : MonoBehaviour
             })
             .ToList();
 
-        int maxLevel = levelNumbers.Max();
-        if (levelInput != null)
-            levelInput.text = maxLevel.ToString();
+         maxLevel = levelNumbers.Max();
         Debug.Log($"📘 Level cao nhất: {maxLevel}");
 #else
         levelInput.text = "0";
@@ -253,10 +250,10 @@ public class LevelManager : MonoBehaviour
         float minY = -camHeight / 2f + marginBottom;
         float maxY = camHeight / 2f - marginTop;
 
-        float minDistance = 1f; // khoảng cách tối thiểu giữa các tile
+        float minDistance = 1f; 
 
         int attempts = 0;
-        int maxAttempts = count * 10; // tránh vòng lặp vô hạn
+        int maxAttempts = count * 10; 
 
         while (createdThisLayer.Count < count && attempts < maxAttempts)
         {
@@ -266,7 +263,6 @@ public class LevelManager : MonoBehaviour
                 Random.Range(minY, maxY)
             );
 
-            // kiểm tra khoảng cách với tất cả tile đã tạo
             bool tooClose = false;
             foreach (var t in createdThisLayer)
             {
@@ -307,12 +303,12 @@ public class LevelManager : MonoBehaviour
 
 
     public void SaveToSO()
-    {
+    {   
 #if UNITY_EDITOR
         var asset = ScriptableObject.CreateInstance<LevelDataSO>();
         asset.tiles = new List<TileSaveData>();
 
-        foreach (var tile in GetComponentsInChildren<Tile>())
+        foreach (var tile in grid.transform.GetComponentsInChildren<Tile>())
         {
             if (tile == null) continue;
 
@@ -331,8 +327,7 @@ public class LevelManager : MonoBehaviour
         if (!Directory.Exists(folderPath))
             Directory.CreateDirectory(folderPath);
 
-        string path = $"{folderPath}/level_{levelInput.text}.asset";
-
+        string path = $"{folderPath}/level_{maxLevel+1}.asset";
         AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
@@ -342,56 +337,56 @@ public class LevelManager : MonoBehaviour
         Debug.LogWarning("⚠️ SaveToSO() chỉ hoạt động trong Unity Editor!");
 #endif
     }
-    public void LoadFromSO()
-    {
-#if UNITY_EDITOR
-        ClearGeneratedTiles();
+//    public void LoadFromSO()
+//    {
+//#if UNITY_EDITOR
+//        ClearGeneratedTiles();
 
-        string folderPath = "Assets/Levels";
-        string fileName = $"level_{levelInput.text}.asset";
-        string fullPath = Path.Combine(folderPath, fileName);
+//        string folderPath = "Assets/Levels";
+//        string fileName = $"level_{}.asset";
+//        string fullPath = Path.Combine(folderPath, fileName);
 
-        if (!File.Exists(fullPath))
-        {
-            Debug.LogError($"❌ Không tìm thấy file: {fullPath}");
-            return;
-        }
+//        if (!File.Exists(fullPath))
+//        {
+//            Debug.LogError($"❌ Không tìm thấy file: {fullPath}");
+//            return;
+//        }
 
-        LevelDataSO levelData = AssetDatabase.LoadAssetAtPath<LevelDataSO>(fullPath);
-        if (levelData == null)
-        {
-            Debug.LogError("❌ Không thể load LevelDataSO!");
-            return;
-        }
+//        LevelDataSO levelData = AssetDatabase.LoadAssetAtPath<LevelDataSO>(fullPath);
+//        if (levelData == null)
+//        {
+//            Debug.LogError("❌ Không thể load LevelDataSO!");
+//            return;
+//        }
 
-        foreach (var tileSave in levelData.tiles)
-        {
-            if (tileSave == null) continue;
+//        foreach (var tileSave in levelData.tiles)
+//        {
+//            if (tileSave == null) continue;
 
-            GameObject tileObj = Instantiate(tilePrefab, tileSave.worldPos, Quaternion.identity, transform);
-            Tile tile = tileObj.GetComponent<Tile>();
-            if (tile == null)
-            {
-                Debug.LogWarning("⚠️ Prefab không có component Tile!");
-                continue;
-            }
+//            GameObject tileObj = Instantiate(tilePrefab, tileSave.worldPos, Quaternion.identity, transform);
+//            Tile tile = tileObj.GetComponent<Tile>();
+//            if (tile == null)
+//            {
+//                Debug.LogWarning("⚠️ Prefab không có component Tile!");
+//                continue;
+//            }
 
-            tile.tileData = tileSave.tile;
-            tile.worldPos = tileSave.worldPos;
-            tile.gridPos = tileSave.gridPos;
-            tile.layer = tileSave.layer;
-            tile.isBlocked = tileSave.isBlocked;
-            tile.isClicked = tileSave.clicked;
-            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
-        }
+//            tile.tileData = tileSave.tile;
+//            tile.worldPos = tileSave.worldPos;
+//            tile.gridPos = tileSave.gridPos;
+//            tile.layer = tileSave.layer;
+//            tile.isBlocked = tileSave.isBlocked;
+//            tile.isClicked = tileSave.clicked;
+//            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
+//        }
 
 
-        Debug.Log($"✅ Load Level thành công từ {fileName}");
-#else
-    Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
-#endif
-    }
-    public void LoadFromSO(int level)
+//        Debug.Log($"✅ Load Level thành công từ {fileName}");
+//#else
+//    Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
+//#endif
+//    }
+    public void LoadFromSO(int level )
     {
 #if UNITY_EDITOR
         ClearGeneratedTiles();

@@ -119,6 +119,17 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &62286332 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2169953768768176191, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
+  m_PrefabInstance: {fileID: 3554875397476965442}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1 &106750033
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,17 +869,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6040209953022244103, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
   m_PrefabInstance: {fileID: 3554875397476965442}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &740411324 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2941485639947856516, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
-  m_PrefabInstance: {fileID: 3554875397476965442}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 999ca9fc4ee2adc46a2cb6ff0e6d33d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SettingUI
 --- !u!114 &740411325 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1253894782260431226, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
@@ -880,6 +880,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+--- !u!114 &740411327 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6255895974927346934, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
+  m_PrefabInstance: {fileID: 3554875397476965442}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 999ca9fc4ee2adc46a2cb6ff0e6d33d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SettingUI
 --- !u!1 &742302098
 GameObject:
   m_ObjectHideFlags: 0
@@ -2181,7 +2192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fb0cf617ca892c43a67ecf162832ad5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  level: 1
+  level: 4
 --- !u!4 &1716148354
 Transform:
   m_ObjectHideFlags: 0
@@ -2714,6 +2725,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 764c6a7ae861e6f47bd757c314c51b28, type: 2}
   - {fileID: 11400000, guid: baa5b752d0a20c9439497beee6015fff, type: 2}
   - {fileID: 11400000, guid: 947baed74c1225149b4f22131196e146, type: 2}
+  selectingLevel: 0
 --- !u!1 &2030424095
 GameObject:
   m_ObjectHideFlags: 0
@@ -2923,7 +2935,7 @@ MonoBehaviour:
   playerWinUI: {fileID: 1816172821}
   levelText: {fileID: 1732691990}
   settingButton: {fileID: 1311428430}
-  settingUI: {fileID: 740411324}
+  settingUI: {fileID: 740411327}
   settingUIOverlay: {fileID: 740411325}
 --- !u!1001 &1457820407583318910
 PrefabInstance:
@@ -3293,6 +3305,14 @@ PrefabInstance:
     - target: {fileID: 6097483226126363473, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
       propertyPath: m_Color.r
       value: 0.31764707
+      objectReference: {fileID: 0}
+    - target: {fileID: 6255895974927346934, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
+      propertyPath: homeButton
+      value: 
+      objectReference: {fileID: 62286332}
+    - target: {fileID: 6255895974927346934, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
+      propertyPath: supportButton
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 6880178120076462375, guid: 3ace57241995b054e9a82934452d43a7, type: 3}
       propertyPath: m_AnchorMax.y

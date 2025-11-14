@@ -123,7 +123,7 @@ public class TileManager : MonoBehaviour
 
     private void GenerateNewLevel(int level)
     {
-        LevelManager.Instance.LoadFromSO(level);
+        //LevelManager.Instance.LoadFromSO(level);
         currentTiles = GetComponentsInChildren<Tile>().ToList();
         GameManager.instance.ChangeState(GameState.Playing);
     }

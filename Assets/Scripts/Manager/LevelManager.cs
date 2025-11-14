@@ -302,41 +302,7 @@ public class LevelManager : MonoBehaviour
     }
 
 
-    public void SaveToSO()
-    {   
-#if UNITY_EDITOR
-        var asset = ScriptableObject.CreateInstance<LevelDataSO>();
-        asset.tiles = new List<TileSaveData>();
-
-        foreach (var tile in grid.transform.GetComponentsInChildren<Tile>())
-        {
-            if (tile == null) continue;
-
-            asset.tiles.Add(new TileSaveData
-            {
-                tile = tile.tileData,
-                worldPos = tile.worldPos,
-                gridPos = tile.gridPos,
-                layer = tile.layer,
-                isBlocked = tile.isBlocked,
-                clicked = tile.isClicked
-            });
-        }
-
-        string folderPath = "Assets/Levels";
-        if (!Directory.Exists(folderPath))
-            Directory.CreateDirectory(folderPath);
-
-        string path = $"{folderPath}/level_{maxLevel+1}.asset";
-        AssetDatabase.CreateAsset(asset, path);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-
-        Debug.Log($"✅ Đã lưu Level ScriptableObject tại: {path}");
-#else
-        Debug.LogWarning("⚠️ SaveToSO() chỉ hoạt động trong Unity Editor!");
-#endif
-    }
+   
 //    public void LoadFromSO()
 //    {
 //#if UNITY_EDITOR
@@ -386,55 +352,7 @@ public class LevelManager : MonoBehaviour
 //    Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
 //#endif
 //    }
-    public void LoadFromSO(int level )
-    {
-#if UNITY_EDITOR
-        ClearGeneratedTiles();
-
-        string folderPath = "Assets/Levels";
-        string fileName = $"level_{level}.asset";
-        string fullPath = Path.Combine(folderPath, fileName);
-
-        if (!File.Exists(fullPath))
-        {
-            Debug.LogError($"❌ Không tìm thấy file: {fullPath}");
-            return;
-        }
-
-        LevelDataSO levelData = AssetDatabase.LoadAssetAtPath<LevelDataSO>(fullPath);
-        if (levelData == null)
-        {
-            Debug.LogError("❌ Không thể load LevelDataSO!");
-            return;
-        }
-
-        foreach (var tileSave in levelData.tiles)
-        {
-            if (tileSave == null) continue;
-
-            GameObject tileObj = Instantiate(tilePrefab, tileSave.worldPos, Quaternion.identity, transform);
-            Tile tile = tileObj.GetComponent<Tile>();
-            if (tile == null)
-            {
-                Debug.LogWarning("⚠️ Prefab không có component Tile!");
-                continue;
-            }
-
-            tile.tileData = tileSave.tile;  // <-- gán trực tiếp TileDataSO
-            tile.worldPos = tileSave.worldPos;
-            tile.gridPos = tileSave.gridPos;
-            tile.layer = tileSave.layer;
-            tile.isBlocked = tileSave.isBlocked;
-            tile.isClicked = tileSave.clicked;
-            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
-        }
-
-
-        Debug.Log($"✅ Load Level thành công từ {fileName}");
-#else
-    Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
-#endif
-    }
+    
 
     void OnDrawGizmos()
     {

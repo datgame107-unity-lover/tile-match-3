@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1852386253674054708}
   - component: {fileID: 4409985055255895158}
-  - component: {fileID: 957086294364095230}
+  - component: {fileID: 6947900361249625690}
   m_Layer: 5
   m_Name: CreateTile
   m_TagString: Untagged
@@ -46,7 +46,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1482411994655409041}
   m_CullTransparentMesh: 1
---- !u!114 &957086294364095230
+--- !u!114 &6947900361249625690
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,15 +55,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1482411994655409041}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed87ddac954574d409ff9099c2e35ca3, type: 3}
+  m_Script: {fileID: 11500000, guid: 2f14b917bf6df4b4dbfe5026bf4388ca, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileData: {fileID: 0}
-  worldPos: {x: 0, y: 0, z: 0}
-  gridPos: {x: 0, y: 0}
-  layer: 0
-  isBlocked: 1
-  isClicked: 1
+  m_EditorClassIdentifier: '::'
+  tilePrefabToSpawn: {fileID: 3822731737702487939, guid: f2db39a43909d4f47b4bd1fabef8e3f1, type: 3}
+  tileData: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
+  grid: {fileID: 0}
+  cellPadding: 0.05
+  allowHalfCell: 0
 --- !u!1 &3611166947220837844
 GameObject:
   m_ObjectHideFlags: 0

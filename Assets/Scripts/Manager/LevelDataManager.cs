@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -7,6 +8,39 @@ public static class LevelDataManager
 {
     private static string folderPath = "Assets/Levels";
 
+    public static int GetTotalLevel()
+    {
+        int totalLevel = 0;
+        if (!Directory.Exists(folderPath))
+        {
+            Debug.LogWarning("📁 Thư mục Assets/Levels chưa tồn tại!");
+            return 0;
+        }
+
+        string[] files = Directory.GetFiles(folderPath, "Level_*.asset");
+
+        if (files.Length == 0)
+        {
+            Debug.Log("⚠️ Không có level nào được lưu!");
+        }
+        else
+        {
+            var levelNumbers = files
+            .Select(f => Path.GetFileNameWithoutExtension(f))
+            .Select(name =>
+            {
+                string[] parts = name.Split('_');
+                if (parts.Length > 1 && int.TryParse(parts[1], out int n))
+                    return n;
+                return 0;
+            })
+            .ToList();
+
+             totalLevel = levelNumbers.Max();
+        }
+            return totalLevel;
+
+    }
     public static bool SaveToSO(Transform grid, int levelIndex)
     {   
         if(grid.GetComponentInChildren<Tile>() ==null) return false;
@@ -23,7 +57,6 @@ public static class LevelDataManager
             {
                 tile = tile.tileData,
                 worldPos = tile.transform.position,
-                gridPos = tile.gridPos,
                 layer = tile.layer,
                 isBlocked = tile.isBlocked,
                 clicked = tile.isClicked
@@ -47,7 +80,7 @@ public static class LevelDataManager
 #endif
     }
 
-    public static List<Tile> LoadFromSO(int levelIndex, GameObject tilePrefab, Transform gridParent)
+    public static void LoadFromSO(int levelIndex, GameObject tilePrefab, Transform gridParent)
     {
 #if UNITY_EDITOR
         string filePath = $"{folderPath}/level_{levelIndex}.asset";
@@ -58,7 +91,6 @@ public static class LevelDataManager
         if (data == null)
         {
             Debug.LogError($"❌ Không tìm thấy file: {filePath}");
-            return null;
         }
 
         // Clear tile cũ
@@ -81,7 +113,6 @@ public static class LevelDataManager
 
             // Gán dữ liệu
             tile.tileData = saveData.tile;
-            tile.gridPos = saveData.gridPos;
             tile.layer = saveData.layer;
             tile.isBlocked = saveData.isBlocked;
             tile.isClicked = saveData.clicked;
@@ -99,7 +130,6 @@ public static class LevelDataManager
 
         Debug.Log($"✅ Loaded Level_{levelIndex}.asset thành công!");
 
-        return loadedTiles;
 #else
         Debug.LogWarning("⚠ LoadFromSO chỉ hoạt động trong Editor!");
         return null;

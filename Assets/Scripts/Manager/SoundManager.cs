@@ -1,6 +1,5 @@
-﻿using NUnit.Framework;
+﻿using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
@@ -18,6 +17,8 @@ public class SoundManager : MonoBehaviour
     [Header("Audio Clips")]
     public List<AudioClip> backgroundMusics;
     public AudioClip clickSoundClip;
+    public AudioClip winClip;
+    public AudioClip loseClip;
 
     private void Awake()
     {
@@ -32,17 +33,30 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
+        // load trạng thái ngay từ Awake
+        musicOn = PlayerPrefs.GetInt("music_on", 1) == 1;
+        sfxOn = PlayerPrefs.GetInt("sfs_on", 1) == 1;
+
         musicSource.mute = !musicOn;
         sfxSource.mute = !sfxOn;
 
         ButtonSound.SetDefaultClickSound(clickSoundClip);
 
-        if (musicOn && backgroundMusics != null)
-        {
-            PlayMusic(backgroundMusics[Random.Range(0,backgroundMusics.Count-1)]);
-        }
+        if (musicOn && backgroundMusics != null && backgroundMusics.Count > 0)
+            PlayMusic(backgroundMusics[Random.Range(0, backgroundMusics.Count)]);
     }
 
+    public void PlayWinClip(float volume = 1f)
+    {
+        if (!sfxOn || winClip == null) return;
+        sfxSource.PlayOneShot(winClip, volume);
+    }
+
+    public void PlayLose(float volume = 1f)
+    {
+        if (!sfxOn || loseClip == null) return;
+        sfxSource.PlayOneShot(loseClip, volume);
+    }
 
     public void PlayMusic(AudioClip clip, bool loop = true, float volume = 1f)
     {
@@ -54,8 +68,6 @@ public class SoundManager : MonoBehaviour
 
         if (musicOn)
             musicSource.Play();
-        else
-            musicSource.Stop(); // nếu tắt, dừng hẳn
     }
 
     public void StopMusic()
@@ -66,26 +78,23 @@ public class SoundManager : MonoBehaviour
     public void SetMusic(bool on)
     {
         musicOn = on;
+        PlayerPrefs.SetInt("music_on", on ? 1 : 0);
 
-        if (musicOn)
+        musicSource.mute = !on;
+
+        if (on && !musicSource.isPlaying && backgroundMusics.Count > 0)
         {
-            musicSource.mute = false;
-
-            if (!musicSource.isPlaying && backgroundMusics != null)
-                PlayMusic(backgroundMusics[Random.Range(0, backgroundMusics.Count - 1)]);
-
+            PlayMusic(backgroundMusics[Random.Range(0, backgroundMusics.Count)]);
         }
-        else
+        else if (!on)
         {
-            musicSource.mute = true;
-            musicSource.Pause(); // ngừng nhưng không reset clip
+            musicSource.Pause();
         }
     }
 
     public void PlaySFX(AudioClip clip, float volume = 1f)
     {
         if (!sfxOn || clip == null) return;
-
         sfxSource.PlayOneShot(clip, volume);
     }
 
@@ -93,16 +102,14 @@ public class SoundManager : MonoBehaviour
     {
         sfxOn = on;
         sfxSource.mute = !on;
+        PlayerPrefs.SetInt("sfs_on", on ? 1 : 0);
     }
-
 
     public void Vibrate(float duration = 0.1f)
     {
 #if UNITY_ANDROID || UNITY_IOS
         if (vibrationOn)
-        {
             Handheld.Vibrate();
-        }
 #endif
     }
 

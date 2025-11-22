@@ -15,24 +15,45 @@ public class SelectedTilesUI : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnTileSelected += HandleTileSelected;
-        EventManager.OnTileRemoved += HandleTilesRemoved;
+        EventManager.OnTilesRemoved += HandleTilesRemoved;
+        EventManager.OnTileRemoved += HandleTileRemoved;
+        EventManager.OnRestartLevel += RestartLevelHandler;
+        EventManager.OnPlayOn += PlayOnHandler;
+
     }
 
     private void OnDisable()
     {
         EventManager.OnTileSelected -= HandleTileSelected;
         EventManager.OnTileRemoved -= HandleTilesRemoved;
+        EventManager.OnTilesRemoved -= HandleTilesRemoved;
+        EventManager.OnRestartLevel -= RestartLevelHandler;
+        EventManager.OnPlayOn -= PlayOnHandler;
+
     }
 
-
-    public void HandleTileSelected(Tile tile)
+    private void PlayOnHandler()
+    {
+        for (int i = selectedTilePanel.childCount - 1; i >= selectedTilePanel.childCount - 4; i--)
+        {
+            Destroy(selectedTilePanel.GetChild(i).gameObject);
+        }
+    }
+    private void RestartLevelHandler()
+    {
+        if (selectedTilePrefab.transform.childCount < 1) return;
+        for (int i = selectedTilePanel.childCount - 1; i >= 0; i--)
+        {
+            Destroy(selectedTilePanel.GetChild(i).gameObject);
+        }
+    }
+    private void HandleTileSelected(Tile tile)
     {
         Canvas rootCanvas = selectedTilePanel.GetComponentInParent<Canvas>();
 
         Tile selectedTile = Instantiate(selectedTilePrefab, selectedTilePanel).GetComponent<Tile>();
         RectTransform rt = selectedTile.GetComponent<RectTransform>();
 
-        // Chuyển tọa độ từ World sang Local của panel
         Vector2 localPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             selectedTilePanel.GetComponent<RectTransform>(),
@@ -62,7 +83,7 @@ public class SelectedTilesUI : MonoBehaviour
 
 
     }
-  
+
 
     private void SwapSibling(Transform sibling1, Transform sibling2)
     {
@@ -73,20 +94,45 @@ public class SelectedTilesUI : MonoBehaviour
         sibling2.SetSiblingIndex(index1);
     }
 
+    private void HandleTileRemoved(TileDataSO tileData)
+    {
+        List<Tile> selectedTiles = new List<Tile>();
+        selectedTiles = selectedTilePanel.GetComponentsInChildren<Tile>().ToList();
+        for (int i = selectedTiles.Count - 1; i >= 0; i--)
+        {
+            if (selectedTiles[i].tileData == tileData)
+            {
+                selectedTiles[i].transform.Find("Container").DOScale(0, 0.5f)
+                .OnComplete(() =>
+                 {
 
+                     Destroy(selectedTiles[i].gameObject);
+                 });
+                Destroy(selectedTiles[i].gameObject);
+
+                break;
+
+            }
+        }
+
+    }
     private void HandleTilesRemoved(TileDataSO tileData)
     {
         List<Tile> selectedTiles = new List<Tile>();
         selectedTiles = selectedTilePanel.GetComponentsInChildren<Tile>().ToList();
         foreach (Tile tile in selectedTiles)
-        {   
+        {
             if (tile.tileData == tileData)
             {
                 tile.transform.Find("Container").DOScale(1.2f, .3f).SetLoops(1, LoopType.Restart)
-                     .OnComplete(() =>
-                     {
-                         Destroy(tile.gameObject);
-                     });
+                    .OnComplete(() =>
+                {
+
+                    Destroy(tile.gameObject);
+                });
+                
+              
+
             }
         }
     }

@@ -14,9 +14,9 @@ public class LevelModeHandler : IGameModeHandler
         manager.DefaultSelectLogic(tile);
     }
 
-    public void OnTilesMatched(TileDataSO tileData)
+    public void OnTilesMatched(TileDataSO tileData, Tile tile)
     {
-        EventManager.OnTileRemoved?.Invoke(tileData);
+        EventManager.OnTilesRemoved?.Invoke(tileData);
     }
 
     public void OnWinCheck(List<Tile> currentTiles, List<Tile> selectingTiles)
@@ -26,4 +26,5 @@ public class LevelModeHandler : IGameModeHandler
             manager.StartCoroutine(manager.Win());
         }
     }
+   
 }

@@ -7,27 +7,29 @@ using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 {
-    [SerializeField] private ScrollRect scrollRect;
-    [SerializeField] private RectTransform content;
-    [SerializeField] private int menuCount = 3;
-    [SerializeField] private float tweenDuration = 0.35f;
-    [SerializeField] private Button playButton;
-    [SerializeField] private Button chaneModeButton;
-    [SerializeField] private Button settingButton;
-    [SerializeField] private GameObject settingUI;
+    public ScrollRect scrollRect;
+    public RectTransform content;
+    public int menuCount = 3;
+    public float tweenDuration = 0.35f;
+    public Button playButton;
+    public Button changeModeButton;
+    public Button settingButton;
+    public Button shopButton;
+    public GameObject settingUI;
+    public GameObject shopUI;
+    public Button levelCreatorButton;
     private int currentIndex = 1    ;
-
     private void Start()
     {
-        SnapToPage(currentIndex, true); // Đặt page bắt đầu
-        scrollRect.vertical = false;    // Khóa trục dọc
+        SnapToPage(currentIndex, true); 
+        scrollRect.vertical = false;   
 
         playButton.onClick.AddListener(() =>
         {
             SceneLoader.TargetScene = SceneEnum.GameScene;
             SceneManager.LoadScene(SceneEnum.Loading.ToString(),LoadSceneMode.Single);
         });
-        chaneModeButton.onClick.AddListener(() =>
+        changeModeButton.onClick.AddListener(() =>
         {
             ChangeMode();
         });
@@ -36,35 +38,39 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         {
             settingUI.SetActive(!settingUI.activeSelf);
         });
+
+        shopButton.onClick.AddListener(() =>
+        {
+            shopUI.SetActive(true);
+        });
+        levelCreatorButton.onClick.AddListener(() =>
+        {
+            SceneLoader.TargetScene = SceneEnum.LevelCreator; // đặt scene muốn load
+            SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
+        });
     }
     private void ChangeMode()
     {
         GameMode currentMode = GameManager.instance.gameMode;
-        // Đổi chế độ
         currentMode = currentMode == GameMode.Level ? GameMode.Infinite : GameMode.Level;
 
         GameManager.instance.ChangeMode(currentMode);
-        // Lấy component text
-        TextMeshProUGUI buttonText = chaneModeButton.GetComponentInChildren<TextMeshProUGUI>();
+        TextMeshProUGUI buttonText = changeModeButton.GetComponentInChildren<TextMeshProUGUI>();
 
-        // Gán text hiển thị
         buttonText.text = currentMode.ToString();
 
-        // Đổi màu button và màu text tương ứng
         if (currentMode == GameMode.Level)
         {
-            // Chế độ Level
             ColorUtility.TryParseHtmlString("#51DA4D", out Color bgColor);
             ColorUtility.TryParseHtmlString("#F5F5F5", out Color textColor);
-            chaneModeButton.image.color = bgColor;
+            changeModeButton.image.color = bgColor;
             buttonText.color = textColor;
         }
         else
         {
-            // Chế độ Infinite (màu khác khi đổi)
             ColorUtility.TryParseHtmlString("#3B82F6", out Color bgColor); // xanh dương
             ColorUtility.TryParseHtmlString("#FFFFFF", out Color textColor); // trắng
-            chaneModeButton.image.color = bgColor;
+            changeModeButton.image.color = bgColor;
             buttonText.color = textColor;
         }
     }
@@ -76,13 +82,10 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     {
         float normalizedPos = scrollRect.horizontalNormalizedPosition;
 
-        // Tính index gần nhất
         int targetIndex = Mathf.RoundToInt((1 - normalizedPos) * (menuCount - 1));
 
-        // Giới hạn index
         targetIndex = Mathf.Clamp(targetIndex, 0, menuCount - 1);
 
-        // Snap khi thả
         SnapToPage(targetIndex);
     }
 

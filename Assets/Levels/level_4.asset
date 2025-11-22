@@ -13,39 +13,21 @@ MonoBehaviour:
   m_Name: level_4
   m_EditorClassIdentifier: Assembly-CSharp::LevelDataSO
   tiles:
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: 0, y: 1, z: 0}
-    gridPos: {x: 0, y: 1}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: 0, y: 0, z: 0}
+  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
+    worldPos: {x: -0.8, y: -1.5999999, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 0
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -1, y: 0, z: 0}
-    gridPos: {x: -1, y: 0}
-    layer: 0
+  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
+    worldPos: {x: 0, y: -1.5999999, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 1
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -1, y: 1, z: 0}
-    gridPos: {x: -1, y: 1}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: 0, y: -1, z: 0}
-    gridPos: {x: 0, y: -1}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -1, y: -1, z: 0}
-    gridPos: {x: -1, y: -1}
-    layer: 0
+  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
+    worldPos: {x: -0.8, y: -0.79999995, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 2
     isBlocked: 0
     clicked: 0

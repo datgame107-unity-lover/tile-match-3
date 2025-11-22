@@ -3,367 +3,88 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEditor;
+using UnityEditor.Overlays;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public static class LevelManager
 {
-    public static LevelManager Instance;
-    
-
-
-    [Header("Shape Config")]
-    public BaseShapeSO shape;
-
-    [Header("Tile Settings")]
-    public GameObject tilePrefab;
-    public bool useSortingOrder = true;
-
-    [Header("Clear Before Generate")]
-    public bool autoClearOldTiles = true;
-
-    [Header("Overlap Resolve")]
-    public int resolveIterations = 8;
-    public float minDistanceMultiplier = 0.9f;
-    public bool useRendererBoundsForSpacing = true;
-
-    public TileDataSO[] tileDatas;
-    public Transform grid;
-    public int selectingLevel;
-    public int maxLevel;
-    private void Awake()
+    public static List<Tile> GenerateTiles(Transform grid, List<TileDataSO> tileDatas, int spawnCount)
     {
-        if (Instance == null)
+        var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TilePrefab.prefab");
+        if (tilePrefab == null)
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
-    private void Start()
-    {
-        selectingLevel = PlayerPrefs.GetInt("level");
-#if UNITY_EDITOR
-        string folderPath = "Assets/Levels";
-        if (!Directory.Exists(folderPath))
-        {
-            Debug.LogWarning("📁 Thư mục Assets/Levels chưa tồn tại!");
-            return;
+            Debug.LogError("Không tìm thấy TilePrefab!");
+            return new List<Tile>();
         }
 
-        string[] files = Directory.GetFiles(folderPath, "Level_*.asset");
+        List<Tile> createdTiles = new List<Tile>();
+        int maxAttempts = 50;
+        float gridWidth = 4f;
+        float gridHeight = 6f;
+        float padding = 0.1f; // khoảng cách tối thiểu giữa các tile
 
-        if (files.Length == 0)
+        BoxCollider2D prefabBox = tilePrefab.GetComponent<BoxCollider2D>();
+        Vector2 tileSize = prefabBox != null ? prefabBox.size + new Vector2(padding, padding) : new Vector2(1f, 1f);
+
+        for (int i = 0; i < spawnCount; i++)
         {
-            Debug.Log("⚠️ Không có level nào được lưu!");
-            return;
-        }
+            TileDataSO data = tileDatas[Random.Range(0, tileDatas.Count)];
+            Vector2 spawnPos = Vector2.zero;
+            bool positionFound = false;
 
-        var levelNumbers = files
-            .Select(f => Path.GetFileNameWithoutExtension(f))
-            .Select(name =>
+            // Tìm vị trí hợp lệ
+            for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
-                string[] parts = name.Split('_');
-                if (parts.Length > 1 && int.TryParse(parts[1], out int n))
-                    return n;
-                return 0;
-            })
-            .ToList();
+                float xPos = Random.Range(-gridWidth / 2f + tileSize.x / 2f, gridWidth / 2f - tileSize.x / 2f);
+                float yPos = Random.Range(-gridHeight / 2f + tileSize.y / 2f, gridHeight / 2f - tileSize.y / 2f);
+                spawnPos = new Vector2(xPos, yPos);
 
-         maxLevel = levelNumbers.Max();
-        Debug.Log($"📘 Level cao nhất: {maxLevel}");
-#else
-        levelInput.text = "0";
-#endif
-    }
-    public void Generate()
-    {
-        if (shape == null || tilePrefab == null)
-        {
-            Debug.LogWarning("⚠️ Missing Shape or Tile Prefab!");
-            return;
-        }
-
-        if (tileDatas == null || tileDatas.Length == 0)
-        {
-            Debug.LogWarning("⚠️ Chưa gán TileDataSO trong LevelManager!");
-            return;
-        }
-
-        if (autoClearOldTiles)
-            ClearGeneratedTiles();
-
-        Vector2[] basePositions = shape.GetTilePositions();
-        int totalTiles = basePositions.Length * shape.layerCount;
-
-        int validTotal = totalTiles - (totalTiles % 3); // đảm bảo chia hết cho 3
-        int remainder = totalTiles % 3;
-
-        if (remainder > 0)
-            Debug.Log($"⚠️ Tổng số tile ({totalTiles}) không chia hết cho 3, bỏ {remainder} tile cuối.");
-
-        totalTiles = validTotal;
-
-        List<TileDataSO> randomDataList = new List<TileDataSO>();
-
-        int perType = Mathf.Max(3, (totalTiles / tileDatas.Length) / 3 * 3); // mỗi loại chia hết cho 3
-        foreach (var data in tileDatas)
-        {
-            for (int i = 0; i < perType; i++)
-                randomDataList.Add(data);
-        }
-
-        while (randomDataList.Count < totalTiles)
-            randomDataList.Add(tileDatas[Random.Range(0, tileDatas.Length)]);
-
-        for (int i = 0; i < randomDataList.Count; i++)
-        {
-            int rand = Random.Range(i, randomDataList.Count);
-            (randomDataList[i], randomDataList[rand]) = (randomDataList[rand], randomDataList[i]);
-        }
-
-        int index = 0;
-
-        for (int layer = 0; layer < shape.layerCount; layer++)
-        {
-            List<Tile> createdThisLayer = new List<Tile>();
-
-            foreach (Vector2 basePos in basePositions)
-            {
-                if (index >= totalTiles) break;
-
-                Vector2 spawnPos = basePos;
-                if (!shape.allowOverlap)
-                    spawnPos += shape.layerOffset * layer;
-
-                Tile tile = Instantiate(tilePrefab, spawnPos, Quaternion.identity, transform).GetComponent<Tile>();
-                tile.layer = layer;
-                tile.worldPos = tile.transform.position;
-                tile.gridPos = Vector2Int.RoundToInt(basePos);
-                tile.isBlocked = layer != shape.layerCount - 1;
-
-                tile.tileData = randomDataList[index];
-                tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tile.tileData.sprite;
-                createdThisLayer.Add(tile);
-                index++;
-            }
-
-            ResolveOverlapUsingCircleCollider(createdThisLayer);
-        }
-
-        Debug.Log($"✅ Đã tạo {totalTiles} tile (chia hết cho 3), mỗi tileData có khoảng {perType} tile.");
-    }
-
-
-    public void ClearGeneratedTiles()
-    {
-        List<Transform> children = new List<Transform>();
-        foreach (Transform child in transform)
-            children.Add(child);
-        foreach (Transform t in children)
-            DestroyImmediate(t.gameObject);
-    }
-
-    private void ResolveOverlapUsingCircleCollider(List<Tile> tiles)
-    {
-        float padding = 0.05f; // bù nhỏ để tránh chạm nhẹ
-
-        // Nhóm tile theo layer
-        var tilesByLayer = tiles.GroupBy(t => t.layer);
-
-        foreach (var layerGroup in tilesByLayer)
-        {
-            List<Tile> layerTiles = layerGroup.ToList();
-
-            for (int iter = 0; iter < resolveIterations; iter++)
-            {
-                bool movedAny = false;
-
-                for (int i = 0; i < layerTiles.Count; i++)
+                // Check overlap với các tile đã spawn
+                bool overlap = false;
+                foreach (var t in createdTiles)
                 {
-                    for (int j = i + 1; j < layerTiles.Count; j++)
+                    Vector2 dist = (Vector2)t.worldPos -spawnPos;
+                    if (Mathf.Abs(dist.x) < tileSize.x && Mathf.Abs(dist.y) < tileSize.y)
                     {
-                        var col1 = layerTiles[i].GetComponent<CircleCollider2D>();
-                        var col2 = layerTiles[j].GetComponent<CircleCollider2D>();
-                        if (col1 == null || col2 == null)
-                            continue;
-
-                        Vector2 pos1 = col1.bounds.center;
-                        Vector2 pos2 = col2.bounds.center;
-
-                        float radius1 = col1.radius * Mathf.Max(col1.transform.lossyScale.x, col1.transform.lossyScale.y);
-                        float radius2 = col2.radius * Mathf.Max(col2.transform.lossyScale.x, col2.transform.lossyScale.y);
-
-                        float minDist = (radius1 + radius2) * minDistanceMultiplier + padding;
-                        float dist = Vector2.Distance(pos1, pos2);
-
-                        if (dist < minDist)
-                        {
-                            Vector2 direction = (pos2 - pos1).normalized;
-                            if (direction == Vector2.zero)
-                                direction = Vector2.right;
-
-                            float overlap = (minDist - dist) / 2f;
-                            col1.transform.position -= (Vector3)(direction * overlap);
-                            col2.transform.position += (Vector3)(direction * overlap);
-                            movedAny = true;
-                        }
+                        overlap = true;
+                        break;
                     }
                 }
 
-                if (!movedAny) break;
-            }
-        }
-    }
-
-
-
-    public List<Tile> GenerateOneLayer(int layer, int count)
-    {
-        List<Tile> generatedTiles = new();
-        if (tilePrefab == null)
-        {
-            Debug.LogWarning("⚠️ Thiếu tilePrefab trong LevelManager!");
-        }
-
-        if (tileDatas == null || tileDatas.Length == 0)
-        {
-            Debug.LogWarning("⚠️ Chưa gán TileDataSO trong LevelManager!");
-        }
-
-        if (autoClearOldTiles && layer == 0)
-            ClearGeneratedTiles();
-
-        List<Tile> createdThisLayer = new List<Tile>();
-
-        Camera cam = Camera.main;
-        float camHeight = cam.orthographicSize * 2f;
-        float camWidth = camHeight * cam.aspect;
-
-        float marginX = 1.5f;
-        float marginTop = 2f;
-        float marginBottom = 2.5f;
-
-        float minX = -camWidth / 2f + marginX;
-        float maxX = camWidth / 2f - marginX;
-        float minY = -camHeight / 2f + marginBottom;
-        float maxY = camHeight / 2f - marginTop;
-
-        float minDistance = 1f; 
-
-        int attempts = 0;
-        int maxAttempts = count * 10; 
-
-        while (createdThisLayer.Count < count && attempts < maxAttempts)
-        {
-            attempts++;
-            Vector2 randomPos = new Vector2(
-                Random.Range(minX, maxX),
-                Random.Range(minY, maxY)
-            );
-
-            bool tooClose = false;
-            foreach (var t in createdThisLayer)
-            {
-                if (Vector2.Distance(t.transform.position, randomPos) < minDistance)
+                if (!overlap)
                 {
-                    tooClose = true;
+                    positionFound = true;
                     break;
                 }
             }
 
-            if (tooClose) continue;
+            if (!positionFound)
+            {
+                Debug.LogWarning("Không tìm được vị trí không overlap cho tile " + i);
+                continue;
+            }
 
-            GameObject tileObj = Instantiate(tilePrefab, randomPos, Quaternion.identity, transform);
-            Tile tile = tileObj.GetComponent<Tile>();
+            // Instantiate tile sau khi đã chọn vị trí hợp lệ
+            GameObject tileGO = GameObject.Instantiate(tilePrefab, grid);
+            tileGO.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0);
 
-            tile.layer = layer;
-            tile.worldPos = randomPos;
-            tile.gridPos = Vector2Int.RoundToInt(randomPos);
+            Tile tile = tileGO.GetComponent<Tile>();
+            if (tile == null) continue;
+
+            tile.tileData = data;
             tile.isBlocked = false;
+            tile.isClicked = false;
+            tile.layer = 0;
+            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = data.sprite;
+            tile.worldPos = tile.transform.position;
 
-            TileDataSO randomData = tileDatas[Random.Range(0, tileDatas.Length)];
-            tile.tileData = randomData;
-            generatedTiles.Add(tile);
-            Transform food = tile.transform.Find("Container/Food");
-            if (food != null)
-            {
-                var renderer = food.GetComponent<SpriteRenderer>();
-                if (renderer != null)
-                    renderer.sprite = randomData.sprite;
-            }
-
-            createdThisLayer.Add(tile);
+            createdTiles.Add(tile);
         }
 
-        Debug.Log($"✅ Đã tạo {createdThisLayer.Count}/{count} tile cho layer {layer} mà không overlap.");
-        return generatedTiles;
+        return createdTiles;
     }
 
 
-   
-//    public void LoadFromSO()
-//    {
-//#if UNITY_EDITOR
-//        ClearGeneratedTiles();
-
-//        string folderPath = "Assets/Levels";
-//        string fileName = $"level_{}.asset";
-//        string fullPath = Path.Combine(folderPath, fileName);
-
-//        if (!File.Exists(fullPath))
-//        {
-//            Debug.LogError($"❌ Không tìm thấy file: {fullPath}");
-//            return;
-//        }
-
-//        LevelDataSO levelData = AssetDatabase.LoadAssetAtPath<LevelDataSO>(fullPath);
-//        if (levelData == null)
-//        {
-//            Debug.LogError("❌ Không thể load LevelDataSO!");
-//            return;
-//        }
-
-//        foreach (var tileSave in levelData.tiles)
-//        {
-//            if (tileSave == null) continue;
-
-//            GameObject tileObj = Instantiate(tilePrefab, tileSave.worldPos, Quaternion.identity, transform);
-//            Tile tile = tileObj.GetComponent<Tile>();
-//            if (tile == null)
-//            {
-//                Debug.LogWarning("⚠️ Prefab không có component Tile!");
-//                continue;
-//            }
-
-//            tile.tileData = tileSave.tile;
-//            tile.worldPos = tileSave.worldPos;
-//            tile.gridPos = tileSave.gridPos;
-//            tile.layer = tileSave.layer;
-//            tile.isBlocked = tileSave.isBlocked;
-//            tile.isClicked = tileSave.clicked;
-//            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = tileSave.tile.sprite;
-//        }
 
 
-//        Debug.Log($"✅ Load Level thành công từ {fileName}");
-//#else
-//    Debug.LogWarning("⚠️ LoadFromSO() chỉ hoạt động trong Unity Editor!");
-//#endif
-//    }
-    
-
-    void OnDrawGizmos()
-    {
-        foreach (Transform child in transform)
-        {
-            var col = child.GetComponent<CircleCollider2D>();
-            if (col != null)
-            {
-                Gizmos.color = Color.yellow;
-                Gizmos.DrawWireSphere(col.bounds.center, col.bounds.extents.x);
-            }
-        }
-    }
 }

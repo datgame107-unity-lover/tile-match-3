@@ -8,11 +8,10 @@ public static class DOAnimationManager
     {
         if (target == null) return;
 
-        target.DOKill();
         Vector3 originalScale = target.localScale;
         target.DOScale(originalScale * scaleMultiplier, duration)
-            .SetEase(Ease.OutQuad);
-            //.OnComplete(() => target.DOScale(originalScale, duration).SetEase(Ease.OutQuad));
+            .SetEase(Ease.OutQuad)
+            .OnComplete(() => target.DOScale(originalScale, duration).SetEase(Ease.OutQuad));
     }
    
 }

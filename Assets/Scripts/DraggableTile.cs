@@ -6,14 +6,11 @@ public class DraggableTile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [Header("References")]
     public GameObject tilePrefabToSpawn;
     public TileDataSO tileData;
-
     [Header("Grid")]
     [SerializeField] private Transform grid; 
-
-    private Canvas canvas;
+    public float cellPadding = 0.1f;
     private GameObject dragContainer;
-    [SerializeField] private float cellSize = 0.8f; // kích thước mỗi cell
-    [SerializeField] private bool allowHalfCell = true; // cho phép snap nửa cell
+    [SerializeField] private bool allowHalfCell = false; // cho phép snap nửa cell
     private void Awake()
     {
        
@@ -55,20 +52,19 @@ public class DraggableTile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         // Dùng collider thay vì sprite (ổn định hơn)
         BoxCollider2D col = tilePrefabToSpawn.GetComponentInChildren<BoxCollider2D>();
-        Vector2 size = Vector2.Scale(col.size, col.transform.lossyScale);
+        Vector2 size = new(0.8f, 0.8f);
 
         float stepX = allowHalfCell ? size.x / 2f : size.x;
         float stepY = allowHalfCell ? size.y / 2f : size.y;
 
         float snapX = Mathf.Floor(worldPos.x / stepX + 0.5f) * stepX;
         float snapY = Mathf.Floor(worldPos.y / stepY + 0.5f) * stepY;
-
         Vector3 snapPos = new Vector3(snapX, snapY, 0f);
 
         GameObject tile = Instantiate(tilePrefabToSpawn, snapPos, Quaternion.identity);
         Tile tileScript = tile.GetComponent<Tile>();
 
-        Collider2D[] hits = Physics2D.OverlapBoxAll(snapPos, new Vector2(0.8f, 0.8f), 0f);
+        Collider2D[] hits = Physics2D.OverlapBoxAll(snapPos, new Vector2(0.75f, 0.75f ), 0f);
 
         int highestLayer = -1;
         foreach (Collider2D hit in hits)
@@ -90,6 +86,8 @@ public class DraggableTile : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         tile.transform.SetParent(grid);
         Destroy(dragContainer);
         dragContainer = null;
+
+        LevelEditorManager.Instance.isChanged = true;
     }
 
 }

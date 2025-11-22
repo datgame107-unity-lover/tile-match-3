@@ -32,10 +32,8 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-        PlayerPrefs.SetInt("level", level);     
-        //if (PlayerPrefs.GetInt("level") == 0) PlayerPrefs.SetInt("level", 1);
-        //PlayerPrefs.Save();
-        //level = PlayerPrefs.GetInt("level");
+        //InnitialData();
+        level = PlayerPrefs.GetInt("level");
         DontDestroyOnLoad(instance);
        
     }
@@ -48,7 +46,15 @@ public class GameManager : MonoBehaviour
     {
         EventManager.OnContinueButtonClicked -= HandleContinue;
     }
-
+    
+    private void InnitialData()
+    {
+        PlayerPrefs.SetString("player_name","hihihi");
+        PlayerPrefs.SetInt("music_on", 1);
+        PlayerPrefs.SetInt("sfx_on", 1);
+        PlayerPrefs.SetInt("level", 1);
+        PlayerPrefs.SetInt("no_ads", 0);
+    }
     private void HandleContinue()
     {
         // chuyển sang trạng thái tạo level mới
@@ -97,12 +103,16 @@ public class GameManager : MonoBehaviour
     {
         PlayerPrefs.SetInt("level", level+1);
         PlayerPrefs.Save();
-
+        SoundManager.Instance.PlayWinClip(1);
         EventManager.OnPlayerWon?.Invoke();
     }
 
     private void HandleLose()
     {
+
+        EventManager.OnPlayerLost?.Invoke();
+        SoundManager.Instance.PlayWinClip(1);
+
     }
     public void ChangeMode(GameMode mode)
     {

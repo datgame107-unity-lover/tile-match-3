@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c752b3865b150344b57e3eec8d71807, type: 3}
+  m_Name: Collect Orange
+  m_EditorClassIdentifier: Assembly-CSharp::QuestDataSO
+  questID: 4
+  icon: {fileID: -1400848978, guid: 22ea41d9853db144b9072aaefd162bfb, type: 3}
+  description: Collect Orange
+  type: 0
+  targetAmount: 1
+  targetTile: {fileID: 11400000, guid: fe2059f6c6921f843936f8727daf362f, type: 2}
+  rewards:
+  - type: 0
+    amount: 3
+    icon: {fileID: 2515289086577107495, guid: bf6eb71781b7d8946b660d1d4c2721e7, type: 3}
+  - type: 5
+    amount: 1
+    icon: {fileID: -8017493534591317485, guid: 9ef7c438c84d21b4282613bec06723eb, type: 3}
+  - type: 1
+    amount: 3
+    icon: {fileID: 2515289086577107495, guid: bf6eb71781b7d8946b660d1d4c2721e7, type: 3}

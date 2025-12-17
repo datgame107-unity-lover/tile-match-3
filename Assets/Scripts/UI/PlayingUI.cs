@@ -11,60 +11,64 @@ public class PlayingUI : MonoBehaviour
     public PlayerWinUI playerWinUI;
     public PlayerLoseUI playerLoseUI;
     public WarningPanel warningPanel;
-
+    public ShopUI shopUI;
+    public Transform levelModePanel;public Transform infiniteModePanel;
+    
     [Header("Texts")]
     public TextMeshProUGUI levelText;
 
     [Header("Buttons")]
     public Button settingButton;
-    public Button shuffleButton;
-    public Button undoButton;
-    public Button powerUpButton;
-    public Button hintButton;
-
+    public GameObject shuffleButton;
+    public GameObject undoButton;
+    public GameObject powerUpButton;
+    public GameObject hintButton;
+   
     [Header("Settings UI")]
     public SettingUI settingUI;
-    public Button settingUIOverlay; // overlay toàn màn hình
+    public Button settingUIOverlay; 
 
+    
     private void Start()
     {
-        // Set level text
         levelText.text = PlayerPrefs.GetInt("level", 1).ToString();
 
-        // Set số lượng item UI
         UpdateItemUI(shuffleButton, "Shuffle");
         UpdateItemUI(hintButton, "Hint");
         UpdateItemUI(undoButton, "Undo");
         UpdateItemUI(powerUpButton, "PowerUp");
 
         ShowGameplayUI();
+        ActiveModeUI(GameManager.instance.gameMode);
     }
 
     private void OnEnable()
     {
+        EventManager.OnCurrencyChanged += HandleCurrencyChanged;
         EventManager.OnStateChanged += HandleGameStateChanged;
         EventManager.OnPlayerWon += HandleNextLevel;
         EventManager.OnSettingButtonClicked += ShowSettingUI;
         EventManager.OnPlayerLost += PlayerLostHandler;
-
+        EventManager.OnModeChanged += HandleModeChanged;
         settingButton.onClick.AddListener(OnSettingButtonClicked);
         settingUIOverlay.onClick.AddListener(CloseSettingUI);
 
-        // --- Setup item buttons ---
-        SetupItemButton(hintButton, "Hint", tileManager.OnHintButton);
-        SetupItemButton(shuffleButton, "Shuffle", tileManager.OnShuffleButton);
-        SetupItemButton(undoButton, "Undo", tileManager.OnUndoButton);
-        SetupItemButton(powerUpButton, "PowerUp", tileManager.OnPowerUpButton);
+        SetupItemButton(hintButton, CurrencyType.Hint, tileManager.OnHintButton);
+        SetupItemButton(shuffleButton, CurrencyType.Shuffle, tileManager.OnShuffleButton);
+        SetupItemButton(undoButton, CurrencyType.Undo, tileManager.OnUndoButton);
+        SetupItemButton(powerUpButton, CurrencyType.PowerUp, tileManager.OnPowerUpButton);
     }
 
     private void OnDisable()
     {
+        EventManager.OnModeChanged -= HandleModeChanged;
+        EventManager.OnCurrencyChanged -= HandleCurrencyChanged;
         settingButton.onClick.RemoveAllListeners();
         settingUIOverlay.onClick.RemoveAllListeners();
-        hintButton.onClick.RemoveAllListeners();
-        shuffleButton.onClick.RemoveAllListeners();
-        undoButton.onClick.RemoveAllListeners();
-        powerUpButton.onClick.RemoveAllListeners();
+        hintButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+        shuffleButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+        undoButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
+        powerUpButton.GetComponentInChildren<Button>().onClick.RemoveAllListeners();
 
         EventManager.OnStateChanged -= HandleGameStateChanged;
         EventManager.OnPlayerWon -= HandleNextLevel;
@@ -73,11 +77,11 @@ public class PlayingUI : MonoBehaviour
     }
 
     #region --- Item Button Helper ---
-    private void SetupItemButton(Button button, string key, System.Action onUse)
+    private void SetupItemButton(GameObject button, CurrencyType type, System.Action onUse)
     {
-        button.onClick.AddListener(() =>
+        button.GetComponentInChildren<Button>().onClick.AddListener(() =>
         {
-            int count = PlayerPrefs.GetInt(key, 0);
+            int count = PlayerPrefs.GetInt(type.ToString(), 0);
 
             if (count <= 0)
             {
@@ -86,8 +90,7 @@ public class PlayingUI : MonoBehaviour
             }
 
             count--;
-            PlayerPrefs.SetInt(key, count);
-            PlayerPrefs.Save();
+            CurrencyManager.Instance.Spend(type, count);
 
             button.transform.GetComponentInChildren<TextMeshProUGUI>().text = count == 0 ? "+" : count.ToString();
 
@@ -95,7 +98,7 @@ public class PlayingUI : MonoBehaviour
         });
     }
 
-    private void UpdateItemUI(Button button, string key)
+    private void UpdateItemUI(GameObject button, string key)
     {
         int count = PlayerPrefs.GetInt(key, 0);
         button.transform.GetComponentInChildren<TextMeshProUGUI>().text = count == 0 ? "+" : count.ToString();
@@ -111,16 +114,52 @@ public class PlayingUI : MonoBehaviour
             refuseText = "Return",
             agreeAction = () =>
             {
-                // Vào shop logic nếu cần
-                Debug.Log("Open Shop");
+                shopUI.gameObject.SetActive(!shopUI.gameObject.activeSelf);
             },
             refuseAction = () =>
             {
-                this.gameObject.SetActive(false);
+                warningPanel.gameObject.SetActive(false);
             }
         });
     }
     #endregion
+    private void HandleModeChanged(GameMode mode)
+    {
+          
+    }
+    private void ActiveModeUI(GameMode mode)
+    {
+        if (mode == GameMode.Level)
+        {
+            levelModePanel.gameObject.SetActive(true);
+            infiniteModePanel.gameObject.SetActive(false);
+        }
+        else
+        {
+            levelModePanel.gameObject.SetActive(false);
+            infiniteModePanel.gameObject.SetActive(true);
+        }
+    }
+    private void HandleCurrencyChanged(CurrencyType currencyType,int amount)
+    {   
+        switch(currencyType)
+        {
+            case CurrencyType.Hint:
+            hintButton.transform.GetComponentInChildren<TextMeshProUGUI>().text = amount == 0 ? "+" : amount.ToString();
+                break;
+            case CurrencyType.Shuffle:
+                shuffleButton.transform.GetComponentInChildren<TextMeshProUGUI>().text = amount == 0 ? "+" : amount.ToString();
+                break;
+            case CurrencyType.Undo:
+                undoButton.transform.GetComponentInChildren<TextMeshProUGUI>().text = amount == 0 ? "+" : amount.ToString();
+                break;
+            case CurrencyType.PowerUp:
+                powerUpButton.transform.GetComponentInChildren<TextMeshProUGUI>().text = amount == 0 ? "+" : amount.ToString();
+                break;
+
+        }    
+
+    }
 
     #region --- Game State Handlers ---
     private void PlayerLostHandler()
@@ -130,7 +169,7 @@ public class PlayingUI : MonoBehaviour
 
     private void HandleNextLevel()
     {
-        levelText.text = PlayerPrefs.GetInt("level", 1).ToString();
+        levelText.text = GameManager.instance.level.ToString();
     }
 
     private void HandleGameStateChanged(GameState newState)
@@ -168,6 +207,7 @@ public class PlayingUI : MonoBehaviour
     private void CloseSettingUI()
     {
         ChangeState(settingUI.gameObject, false);
+        ChangeState(selectedTilePanel.gameObject, true);
         ChangeState(settingUIOverlay.gameObject, false);
         EventManager.OnStateChanged(GameState.Playing);
     }

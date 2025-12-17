@@ -23,5 +23,14 @@ public static class EventManager
     public static Action OnRestartLevel;
     public static Action OnPlayOn;
     public static Action<CurrencyType, int> OnCurrencyChanged;
+    public static Action<GameMode> OnModeChanged;
+    public static Action OnPowerUpUsed;
+    public static Action OnHintUsed;
+    public static Action OnUndoUsed;
+    public static Action OnShuffleUsed;
+    public static Action<int> OnCoinSpent;
+    public static Action<QuestDataSO> OnQuestClaimed;
+    public static Action<ShopItemSO> OnBoughtItem;
+    public static Action OnTransactionComplete;
 
 }

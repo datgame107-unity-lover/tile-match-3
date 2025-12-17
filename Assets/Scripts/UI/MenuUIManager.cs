@@ -7,18 +7,28 @@ using UnityEngine.UI;
 
 public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 {
+    [Header("Scroll & Layout")]
     public ScrollRect scrollRect;
     public RectTransform content;
     public int menuCount = 3;
     public float tweenDuration = 0.35f;
+
+    [Header("Main Menu Buttons")]
     public Button playButton;
     public Button changeModeButton;
     public Button settingButton;
     public Button shopButton;
+    public Button levelCreatorButton;
+
+    [Header("UI Panels")]
     public GameObject settingUI;
     public GameObject shopUI;
-    public Button levelCreatorButton;
-    private int currentIndex = 1    ;
+    public GameObject buyHeartUI;
+
+    [Header("State")]
+    [SerializeField]
+    private int currentIndex = 1;
+
     private void Start()
     {
         SnapToPage(currentIndex, true); 
@@ -26,6 +36,11 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
         playButton.onClick.AddListener(() =>
         {
+            if (CurrencyManager.Instance.Get(CurrencyType.Heart) <= 0)
+            {
+                Instantiate(buyHeartUI, transform);
+                return;
+            }
             SceneLoader.TargetScene = SceneEnum.GameScene;
             SceneManager.LoadScene(SceneEnum.Loading.ToString(),LoadSceneMode.Single);
         });
@@ -41,7 +56,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
         shopButton.onClick.AddListener(() =>
         {
-            shopUI.SetActive(true);
+            shopUI.SetActive(!shopUI.activeSelf);
         });
         levelCreatorButton.onClick.AddListener(() =>
         {
@@ -59,20 +74,6 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
 
         buttonText.text = currentMode.ToString();
 
-        if (currentMode == GameMode.Level)
-        {
-            ColorUtility.TryParseHtmlString("#51DA4D", out Color bgColor);
-            ColorUtility.TryParseHtmlString("#F5F5F5", out Color textColor);
-            changeModeButton.image.color = bgColor;
-            buttonText.color = textColor;
-        }
-        else
-        {
-            ColorUtility.TryParseHtmlString("#3B82F6", out Color bgColor); // xanh dương
-            ColorUtility.TryParseHtmlString("#FFFFFF", out Color textColor); // trắng
-            changeModeButton.image.color = bgColor;
-            buttonText.color = textColor;
-        }
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -87,6 +88,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         targetIndex = Mathf.Clamp(targetIndex, 0, menuCount - 1);
 
         SnapToPage(targetIndex);
+        
     }
 
     private void SnapToPage(int index, bool immediate = false)

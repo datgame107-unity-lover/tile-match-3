@@ -29,7 +29,7 @@ public class LevelCreateUI : MonoBehaviour
     {
         saveButton.onClick.AddListener(() =>
         {
-          
+            print("=))");
             EventManager.OnSavingNewLevel?.Invoke();
         });
         homeButton.onClick.AddListener(() =>
@@ -59,5 +59,20 @@ public class LevelCreateUI : MonoBehaviour
         });
     }
 
-   
+    private void OnEnable()
+    {
+        EventManager.OnSavedNewLevel += SavedNewLevelHandler;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnSavedNewLevel -= SavedNewLevelHandler;
+
+    }
+    private void SavedNewLevelHandler()
+    {
+        ShowTab(TabType.Levels);
+        levelsScroll.GetComponent<LevelsScrollUI>().newLevelButton.interactable = true;
+    }
+
 }

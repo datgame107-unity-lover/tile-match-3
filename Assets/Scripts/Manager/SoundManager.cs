@@ -19,7 +19,10 @@ public class SoundManager : MonoBehaviour
     public AudioClip clickSoundClip;
     public AudioClip winClip;
     public AudioClip loseClip;
-
+    public AudioClip tileRemoveClip;
+    public AudioClip claimQuestClip;
+    public AudioClip buyItemClip;
+    public AudioClip successClip;
     private void Awake()
     {
         if (Instance == null)
@@ -46,6 +49,57 @@ public class SoundManager : MonoBehaviour
             PlayMusic(backgroundMusics[Random.Range(0, backgroundMusics.Count)]);
     }
 
+    private void OnEnable()
+    {
+        EventManager.OnPlayerLost += HandlePlayerLost;
+        EventManager.OnPlayerWon += HandlePlayerWon;
+        EventManager.OnTilesRemoved += HandleTilesRemoved;
+        EventManager.OnTileSelected += HandleTileSelected;
+        EventManager.OnQuestClaimed += HandleQuestClaimed;
+        EventManager.OnBoughtItem += HandleBoughtItem;
+        EventManager.OnTransactionComplete += HandleTransactionComplete;
+    }
+    private void OnDisable()
+    {
+        EventManager.OnPlayerLost -= HandlePlayerLost;
+        EventManager.OnPlayerWon -= HandlePlayerWon;
+        EventManager.OnTilesRemoved -= HandleTilesRemoved;
+        EventManager.OnTileSelected -= HandleTileSelected;
+        EventManager.OnQuestClaimed -= HandleQuestClaimed;
+        EventManager.OnBoughtItem -= HandleBoughtItem;
+        EventManager.OnTransactionComplete -= HandleTransactionComplete;
+
+    }
+    private void HandleTransactionComplete()
+    {
+        PlaySFX(successClip, 0.5f);
+    }
+    private void HandleBoughtItem(ShopItemSO itemSO)
+    {
+        PlaySFX(buyItemClip, 1);
+    }
+    private void HandleQuestClaimed(QuestDataSO quest)
+    {
+        PlaySFX(claimQuestClip, 1f);
+    }
+    private void HandleTileSelected(Tile tile)
+    {
+        if (tile == null) return;
+        PlaySFX(clickSoundClip, 1.3f);
+    }
+    private void HandleTilesRemoved(TileDataSO tile)
+    {
+        PlaySFX(tileRemoveClip, 1f);
+    }
+    private void HandlePlayerLost()
+    {
+        PlayLose();
+    }
+
+    private void HandlePlayerWon()
+    {
+        PlayWinClip();
+    }
     public void PlayWinClip(float volume = 1f)
     {
         if (!sfxOn || winClip == null) return;
@@ -58,7 +112,7 @@ public class SoundManager : MonoBehaviour
         sfxSource.PlayOneShot(loseClip, volume);
     }
 
-    public void PlayMusic(AudioClip clip, bool loop = true, float volume = 1f)
+    public void PlayMusic(AudioClip clip, bool loop = true, float volume = 0.73f)
     {
         if (clip == null) return;
 

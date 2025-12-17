@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public enum SwitchType
 {
@@ -13,82 +12,73 @@ public enum SwitchType
 public class SettingUI : MonoBehaviour
 {
     [Header("UI References")]
-    public Slider soundSwitch;
-    public Slider vibrationSwitch;
-    public Slider musicSwitch;
+    public Button soundSwitch;
+    public Button vibrationSwitch;
+    public Button musicSwitch;
+
     public Button homeButton;
     public Button supportButton;
-    public Button OverlayButton; // overlay full screen
-    public RectTransform container; // vùng UI chính
+    public Button OverlayButton;
+
+    public RectTransform container;
+    public Sprite[] switchImages; // [0] = ON, [1] = OFF
 
     private void OnEnable()
     {
-        // Gán listener
-        soundSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Sound, value));
-        vibrationSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Vibration, value));
-        musicSwitch.onValueChanged.AddListener((value) => HandleSwitchChanged(SwitchType.Music, value));
+        soundSwitch.onClick.AddListener(() => HandleSwitchChanged(SwitchType.Sound));
+        vibrationSwitch.onClick.AddListener(() => HandleSwitchChanged(SwitchType.Vibration));
+        musicSwitch.onClick.AddListener(() => HandleSwitchChanged(SwitchType.Music));
 
-        if (homeButton != null)
-            homeButton.onClick.AddListener(HomeButtonClick);
-        if (supportButton != null)
-            supportButton.onClick.AddListener(SupportButtonClick);
+        homeButton?.onClick.AddListener(HomeButtonClick);
+        supportButton?.onClick.AddListener(SupportButtonClick);
 
-        // Overlay click — chỉ tắt nếu click ngoài container
-        OverlayButton.onClick.AddListener(() =>
-        {
-            Vector2 mousePos = Input.mousePosition;
-            // Kiểm tra nếu click nằm ngoài container thì tắt
-            if (!RectTransformUtility.RectangleContainsScreenPoint(container, mousePos, null))
-            {
-                this.gameObject.SetActive(false);
-            }
-        });
+        OverlayButton.onClick.AddListener(() => gameObject.SetActive(false));
 
-        // Load trạng thái mà không kích hoạt sự kiện
-        LoadSwitchState();
+        SetImage();
     }
 
     private void OnDisable()
     {
-        soundSwitch.onValueChanged.RemoveAllListeners();
-        vibrationSwitch.onValueChanged.RemoveAllListeners();
-        musicSwitch.onValueChanged.RemoveAllListeners();
+        soundSwitch.onClick.RemoveAllListeners();
+        vibrationSwitch.onClick.RemoveAllListeners();
+        musicSwitch.onClick.RemoveAllListeners();
         OverlayButton.onClick.RemoveAllListeners();
         homeButton?.onClick.RemoveAllListeners();
         supportButton?.onClick.RemoveAllListeners();
     }
 
-    private void LoadSwitchState()
+    private void SetImage()
     {
-        if (SoundManager.Instance == null) return;
-
-        // Dùng SetValueWithoutNotify để không gọi HandleSwitchChanged
-        soundSwitch.SetValueWithoutNotify(SoundManager.Instance.sfxOn ? 1 : 0);
-        musicSwitch.SetValueWithoutNotify(SoundManager.Instance.musicOn ? 1 : 0);
-
-        // Giả sử có lưu vibration ở PlayerPrefs
-        vibrationSwitch.SetValueWithoutNotify(PlayerPrefs.GetInt("vibration", 1));
+        soundSwitch.image.sprite = SoundManager.Instance.sfxOn ? switchImages[0] : switchImages[1];
+        musicSwitch.image.sprite = SoundManager.Instance.musicOn ? switchImages[0] : switchImages[1];
+        vibrationSwitch.image.sprite = SoundManager.Instance.vibrationOn ? switchImages[0] : switchImages[1];
     }
 
-    private void HandleSwitchChanged(SwitchType type, float value)
+    private void HandleSwitchChanged(SwitchType type)
     {
-        bool isOn = value > 0.5f;
-
         switch (type)
         {
             case SwitchType.Sound:
-                SoundManager.Instance.SetSFX(isOn);
+                SoundManager.Instance.SetSFX(!SoundManager.Instance.sfxOn);
+                soundSwitch.image.sprite = SoundManager.Instance.sfxOn ? switchImages[0] : switchImages[1];
                 break;
 
             case SwitchType.Vibration:
-                PlayerPrefs.SetInt("vibration", isOn ? 1 : 0);
+                bool vib = PlayerPrefs.GetInt("vibration", 1) == 1;
+                bool newVibState = !vib;
+                PlayerPrefs.SetInt("vibration", newVibState ? 1 : 0);
+
 #if UNITY_ANDROID || UNITY_IOS
-                if (isOn) Handheld.Vibrate();
+                if (newVibState) Handheld.Vibrate();
 #endif
+
+                vibrationSwitch.image.sprite = newVibState ? switchImages[0] : switchImages[1];
+                SoundManager.Instance.vibrationOn = newVibState;
                 break;
 
             case SwitchType.Music:
-                SoundManager.Instance.SetMusic(isOn);
+                SoundManager.Instance.SetMusic(!SoundManager.Instance.musicOn);
+                musicSwitch.image.sprite = SoundManager.Instance.musicOn ? switchImages[0] : switchImages[1];
                 break;
         }
     }
@@ -101,6 +91,6 @@ public class SettingUI : MonoBehaviour
 
     public void SupportButtonClick()
     {
-        // TODO: xử lý nút Support
+        // TODO
     }
 }

@@ -7,7 +7,7 @@ using UnityEngine;
 public class InfiniteModeHandler : IGameModeHandler
 {
     private TileManager manager;
-
+    private DangerSystem dangerSystem;
     private bool isSpawning = false;
     private float spawnInterval = 3f;
 
@@ -18,16 +18,30 @@ public class InfiniteModeHandler : IGameModeHandler
 
     public float aoeRadius = 1.2f;
     public GameObject explodeParticlePrefab;
-
     public InfiniteModeHandler(TileManager manager)
     {
         this.manager = manager;
-
+    }
+    public void Initialize()
+    {
         if (!isSpawning)
         {
             isSpawning = true;
             manager.StartCoroutine(SpawnTilesRoutine());
         }
+
+        DangerBarUI dangerUI = GameObject.FindFirstObjectByType<DangerBarUI>();
+        if (dangerUI == null)
+        {
+            Debug.LogError("[InfiniteMode] DangerBarUI NOT FOUND");
+            return;
+        }
+
+        dangerSystem = new DangerSystem(dangerUI);
+        dangerSystem.OnDangerMax += OnDangerMaxed;
+
+        manager.SortTileAndActivateShadow();
+        manager.StartCoroutine(DangerTickRoutine());
     }
 
     private IEnumerator SpawnTilesRoutine()
@@ -40,10 +54,10 @@ public class InfiniteModeHandler : IGameModeHandler
             foreach (Tile t in oldTiles)
                 t.AddLayer(1);
 
-            int spawnCount = Random.Range(10, 15);
+            int spawnCount = Random.Range(15, 20);
             List<Tile> newTiles = LevelManager.GenerateTiles(manager.transform, manager.tileDatas, spawnCount);
             List<Tile> allTiles = oldTiles.Concat(newTiles).ToList();
-
+            dangerSystem.IncreaseBySpawn();
             manager.SortTileAndActivateShadow(allTiles);
         }
     }
@@ -56,7 +70,8 @@ public class InfiniteModeHandler : IGameModeHandler
     public void OnTilesMatched(TileDataSO data, Tile tile)
     {
         comboCount++;
-
+        float reduceAmount = 0.05f + comboCount * 0.02f;
+        dangerSystem.Decrease(reduceAmount);
         // reset timer
         if (comboTimerCor != null)
             manager.StopCoroutine(comboTimerCor);
@@ -65,7 +80,6 @@ public class InfiniteModeHandler : IGameModeHandler
         bool isSameType = (lastMatchData == data);
         lastMatchData = data;
         EventManager.OnTilesRemoved?.Invoke(data);
-        Debug.Log("Combo = " + comboCount + " sameType = " + isSameType);
 
         // --- RULE 1: nếu 3 cái cùng loại → clear hết loại đó ---
         if ((comboCount == 2 && isSameType)||comboCount==7)
@@ -103,9 +117,6 @@ public class InfiniteModeHandler : IGameModeHandler
         Debug.Log("Combo Reset");
     }
 
-    // ============================
-    // RULE 1: Clear toàn bộ tile cùng loại
-    // ============================
     private void ClearAllSameType(TileDataSO data)
     {
         List<Tile> allTiles = manager.transform.GetComponentsInChildren<Tile>().ToList();
@@ -119,9 +130,6 @@ public class InfiniteModeHandler : IGameModeHandler
         Debug.Log("Clear all tile of type: " + data.name);
     }
 
-    // ============================
-    // RULE 2: Nổ AOE theo bán kính
-    // ============================
     private void ExplodeAOE(Tile centerTile)
     {
         if (centerTile == null)
@@ -145,9 +153,6 @@ public class InfiniteModeHandler : IGameModeHandler
         }
     }
 
-    // ============================
-    // Animation phá tile
-    // ============================
     private void AnimateDestroy(Tile tile)
     {
         Transform tr = tile.transform;
@@ -170,5 +175,47 @@ public class InfiniteModeHandler : IGameModeHandler
     public void OnWinCheck(List<Tile> currentTiles, List<Tile> selectingTiles)
     {
         // Infinite không có win
+    }
+
+    private IEnumerator DangerTickRoutine()
+    {
+        while (true)
+        {
+            dangerSystem.Tick(Time.deltaTime);
+            yield return null;
+        }
+    }
+    private void OnDangerMaxed()
+    {
+        Debug.LogWarning("YOU LOST — Danger Maxed!");
+        GameManager.instance.ChangeState(GameState.Lose);
+
+        manager.StopAllCoroutines();
+    }
+
+    public void OnResetLevel()
+    {   
+        manager.selectingTiles = new List<Tile>();
+        foreach(Tile t in manager.transform.GetComponentsInChildren<Tile>())
+        {
+            manager.currentTiles.Remove(t);
+            GameObject.Destroy(t.gameObject);
+        }    
+        manager.StopAllCoroutines();
+        dangerSystem.ResetValue();
+        
+        manager.StartCoroutine(SpawnTilesRoutine());
+        manager.StartCoroutine(DangerTickRoutine());
+
+    }
+
+    public void OnPlayOn()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void OnContinueLevel()
+    {
+        throw new System.NotImplementedException();
     }
 }

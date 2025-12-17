@@ -10,18 +10,19 @@ public class PlayerLoseUI : MonoBehaviour
     public Button playOnButton;
     public Button giveUpButton;
     public WarningPanel warningPanel;
-
+    private TileManager tileManager_;
 
     
     private void Start()
     {
-
+        tileManager_ = FindFirstObjectByType<TileManager>();
         
 
         playOnButton.onClick.AddListener(() =>
-        {
-            EventManager.OnPlayOn?.Invoke();
+        {   
+            tileManager_.PlayOnHandler();
             this.gameObject.SetActive(false);
+            
         });
         giveUpButton.onClick.AddListener(() =>
         {
@@ -29,7 +30,7 @@ public class PlayerLoseUI : MonoBehaviour
             WarningData data = new WarningData()
             {
                 warningType = WarningType.Delete,
-                message = "Do you Want to give up?",
+                message = "You Will Lose 1 Heart!!",
                 agreeText = "Restart",
                 refuseText = "Home",
 
@@ -42,6 +43,7 @@ public class PlayerLoseUI : MonoBehaviour
                 },
                 refuseAction = () =>
                 {
+                    CurrencyManager.Instance.Spend(CurrencyType.Heart, 1);
                     SceneLoader.TargetScene = SceneEnum.Home; // đặt scene muốn load
                     SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
 

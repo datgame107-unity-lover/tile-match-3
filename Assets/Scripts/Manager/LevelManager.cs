@@ -28,7 +28,7 @@ public static class LevelManager
 
         for (int i = 0; i < spawnCount; i++)
         {
-            TileDataSO data = tileDatas[Random.Range(0, tileDatas.Count)];
+            TileDataSO data = tileDatas[Random.Range(0, tileDatas.Count-4)];
             Vector2 spawnPos = Vector2.zero;
             bool positionFound = false;
 
@@ -60,7 +60,6 @@ public static class LevelManager
 
             if (!positionFound)
             {
-                Debug.LogWarning("Không tìm được vị trí không overlap cho tile " + i);
                 continue;
             }
 

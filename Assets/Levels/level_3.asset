@@ -13,111 +13,129 @@ MonoBehaviour:
   m_Name: level_3
   m_EditorClassIdentifier: Assembly-CSharp::LevelDataSO
   tiles:
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -1.6, y: -1.5999999, z: 0}
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: 0, y: -1.9749999, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: -0.39, y: -0.78999996, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 0
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
-    worldPos: {x: -0.8, y: -1.5999999, z: 0}
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: 0.78, y: -0.78999996, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: 0, y: 0, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: 0.78, y: 0, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 71e379e859457784e93b9c91bb82e6af, type: 2}
+    worldPos: {x: -0.78, y: 0.79, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: 0.78, y: -1.1850001, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 1
-    isBlocked: 0
+    isBlocked: 1
     clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: 0.4, y: -1.5999999, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 764c6a7ae861e6f47bd757c314c51b28, type: 2}
-    worldPos: {x: 0.8, y: -0.39999998, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 764c6a7ae861e6f47bd757c314c51b28, type: 2}
-    worldPos: {x: 0, y: -0.39999998, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 1
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 764c6a7ae861e6f47bd757c314c51b28, type: 2}
-    worldPos: {x: -0.8, y: -0.39999998, z: 0}
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: 0.39, y: -0.78999996, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 2
+    isBlocked: 1
+    clicked: 0
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: -0.39, y: 0.395, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 1
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: -0.8, y: 0.4, z: 0}
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: 0.39, y: 0.79, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 0
+    clicked: 0
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: 1.56, y: -0.39499998, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 0
+    clicked: 0
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 63207832828b42249970cc6cafcc6816, type: 2}
+    worldPos: {x: -0.39, y: 1.58, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 0
+    clicked: 0
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: -1.56, y: -1.5799999, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 0
+    isBlocked: 0
+    clicked: 0
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: 0, y: -1.5799999, z: 0}
+    gridPos: {x: 0, y: 0}
+    layer: 1
+    isBlocked: 0
+    clicked: 0
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: 0.39, y: -0.39499998, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 3
-    isBlocked: 0
+    isBlocked: 1
     clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: 0, y: 0.4, z: 0}
+    shadow: 1
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: 0.78, y: 0, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 4
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: 0.8, y: 0.4, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 5
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -2, y: -1.2, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 1
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 7789b9198b3d8d846aca582183825f8c, type: 2}
-    worldPos: {x: -2, y: -0.39999998, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 2
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: 0.8, y: -1.2, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 2
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: c1bf5b827bec2f847b8aa642e66ad526, type: 2}
-    worldPos: {x: 2, y: -0.39999998, z: 0}
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: 0.39, y: 1.58, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 0
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
-    worldPos: {x: -1.2, y: 0.8, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 4
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 0d1fb26f9186a034aa5f7484cf4b48fa, type: 2}
-    worldPos: {x: -0.4, y: 2, z: 0}
+    shadow: 0
+  - tile: {fileID: 11400000, guid: 9da73aa3df74b4c45804b7032793b210, type: 2}
+    worldPos: {x: 1.17, y: 1.1850001, z: 0}
     gridPos: {x: 0, y: 0}
     layer: 0
     isBlocked: 0
     clicked: 0
-  - tile: {fileID: 11400000, guid: 947baed74c1225149b4f22131196e146, type: 2}
-    worldPos: {x: 1.6, y: 1.6, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 0
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 947baed74c1225149b4f22131196e146, type: 2}
-    worldPos: {x: 0.4, y: 1.6, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 1
-    isBlocked: 0
-    clicked: 0
-  - tile: {fileID: 11400000, guid: 947baed74c1225149b4f22131196e146, type: 2}
-    worldPos: {x: 0.8, y: 2.4, z: 0}
-    gridPos: {x: 0, y: 0}
-    layer: 2
-    isBlocked: 0
-    clicked: 0
+    shadow: 0

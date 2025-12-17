@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class BottomNavBarUI : MonoBehaviour
 {
     private Transform[] containers;
+    private Transform currentSelected;
 
     void Start()
     {
@@ -20,26 +21,29 @@ public class BottomNavBarUI : MonoBehaviour
 
         Button btn3 = transform.Find("Button3").GetComponent<Button>();
         btn3.onClick.AddListener(() => OnButtonClicked(containers[2]));
-    }
 
+        // Mặc định chọn Button 2
+        currentSelected = containers[1];
+        DOAnimationManager.ScaleBounce(currentSelected, 0.2f);
+    }
+    public void ChangeCurrentSelected(int index)
+    {
+
+    }
     private void OnButtonClicked(Transform selectedContainer)
     {
-        if (selectedContainer.localScale.x > 1f)
+        // Nếu nhấn lại chính nó → không làm gì
+        if (currentSelected == selectedContainer)
             return;
-        foreach(Transform container in containers)
-        {
+
+        // Reset scale các button khác
+        foreach (var container in containers)
             container.localScale = Vector3.one;
-        }    
-        foreach (Transform container in containers)
-        {
-            if (container == selectedContainer)
-            {
-                DOAnimationManager.ScaleBounce(container, 1.3f, 0.2f);
-            }
-            else
-            {
-                container.localScale = Vector3.one;
-            }
-        }
+
+        // Scale cho item được chọn
+        DOAnimationManager.ScaleBounce(selectedContainer, 0.2f);
+
+        // Cập nhật biến currentSelected
+        currentSelected = selectedContainer;
     }
 }

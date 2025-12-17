@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public static class SortTiles 
@@ -33,16 +33,26 @@ public static class SortTiles
     }
 
     public static void ActivateShadows(List<Tile> tiles)
-    {
+    {   
+        if (tiles == null) return;
         foreach (Tile tile in tiles)
         {
             if (tile == null) continue;
+
             Collider2D tileCollider = tile.GetComponent<Collider2D>();
             if (tileCollider == null) continue;
-            List<Collider2D> results = new List<Collider2D>();
-            int hitCount = tileCollider.Overlap(ContactFilter2D.noFilter, results);
-            bool showShadow = false; foreach (var hit in results)
+
+            // Tạo box trung tâm 85% của tile
+            Vector2 center = tileCollider.bounds.center;
+            Vector2 size = tileCollider.bounds.size * 0.85f;
+
+            // Kiểm tra overlap
+            Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
+            bool showShadow = false;
+
+            foreach (var hit in hits)
             {
+                if (hit == null) continue;
                 Tile otherTile = hit.GetComponent<Tile>();
                 if (otherTile != null && otherTile.layer > tile.layer)
                 {
@@ -50,11 +60,13 @@ public static class SortTiles
                     break;
                 }
             }
-            tile.isBlocked = showShadow;
-            var shadow = tile.transform.Find("Container/Shadow");
 
-            if (shadow != null) shadow.gameObject.SetActive(showShadow);
+            tile.isBlocked = showShadow;
+
+            var shadow = tile.transform.Find("Container/Shadow");
+            if (shadow != null)
+                shadow.gameObject.SetActive(showShadow);
         }
-        { }
     }
+
 }

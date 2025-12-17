@@ -16,7 +16,6 @@ public class TileManager : MonoBehaviour
 
     [Header("Settings")]
     public int maxSelectableTile = 9;
-    public AudioClip clickSoundClip;
 
     [Header("Refs / Debug")]
     public List<Tile> currentTiles = new List<Tile>();
@@ -40,89 +39,77 @@ public class TileManager : MonoBehaviour
 
     private void Start()
     {
-        Debug.Log($"[TileManager] Current Level: {PlayerPrefs.GetInt("level")}");
-        GenerateNewGame(GameManager.instance.gameMode);
 
-        RefreshCurrentTilesFromHierarchy();
-
-        // Setup mode handler
-        switch (GameManager.instance.gameMode)
+        modeHandler = GameManager.instance.gameMode switch
         {
-            case GameMode.Level:
-                modeHandler = new LevelModeHandler(this);
-                break;
-            case GameMode.Infinite:
-                modeHandler = new InfiniteModeHandler(this);
-                break;
-            default:
-                modeHandler = new LevelModeHandler(this);
-                break;
-        }
+            GameMode.Level => new LevelModeHandler(this),
+            GameMode.Infinite => new InfiniteModeHandler(this),
+            _ => new LevelModeHandler(this),
+        };
+        StartCoroutine(WaitForOneFrame());
+        
+        GameManager.instance.ChangeState(GameState.Playing);
+        currentTiles = transform.GetComponentsInChildren<Tile>().ToList();
+        SortTileAndActivateShadow(currentTiles);
     }
 
     private void OnEnable()
     {
-        EventManager.OnContinueButtonClicked += HandleContinueLevel;
         EventManager.OnRestartLevel += RestartLevelHandler; 
-        EventManager.OnPlayOn += PlayonHandler;
     }
 
     private void OnDisable()
     {
         EventManager.OnRestartLevel -= RestartLevelHandler;
 
-        EventManager.OnContinueButtonClicked -= HandleContinueLevel;
     }
 
-    private void PlayonHandler()
+    public void PlayOnHandler()
     {
-        for (int i = selectingTiles.Count-1; selectingTiles.Count>4; i--)
+        if (CurrencyManager.Instance.Spend(CurrencyType.Flower, 20))
         {
-            selectingTiles[i].gameObject.SetActive(true);
-            selectingTiles[i].isClicked = false;
-            selectingTiles[i].transform.Find("Container").localScale = Vector3.zero;
-            selectingTiles[i].transform.Find("Container").DOScale(1f, 0.5f).SetEase(Ease.OutBack);
-            selectingTiles.Remove(selectingTiles[i]);
 
+
+            for (int i = selectingTiles.Count - 1; selectingTiles.Count > 4; i--)
+            {
+                selectingTiles[i].gameObject.SetActive(true);
+                selectingTiles[i].isClicked = false;
+                selectingTiles[i].transform.Find("Container").localScale = Vector3.zero;
+                selectingTiles[i].transform.Find("Container").DOScale(selectingTiles[i].originalScale, 0.5f).SetEase(Ease.OutBack);
+                selectingTiles.Remove(selectingTiles[i]);
+                EventManager.OnPlayOn?.Invoke();
+            }
+            GameManager.instance.ChangeState(GameState.Playing);
         }
-        GameManager.instance.ChangeState( GameState.Playing );
     }
-    private void LateUpdate()
-    {
-        SortTiles.Sort(currentTiles);
-        SortTiles.ActivateShadows(currentTiles);
-    }
+
 
     private void Update()
     {
         if (GameManager.instance.currentState != GameState.Playing) return;
 
         Tile tileUnderMouse = GetTopTileUnderMouse();
-
+        if (tileUnderMouse==null|| tileUnderMouse.isBlocked) return;
         if (Input.GetMouseButton(0))
         {
             if (tileUnderMouse != currentHoveredTile)
             {
                 if (currentHoveredTile != null)
                 {
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), 1f);
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), 1f);
-
+                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"),tileUnderMouse.originalScale,1.2f, 0.3f);
                 }
 
                 currentHoveredTile = tileUnderMouse;
 
                 if (currentHoveredTile != null && !currentHoveredTile.isBlocked)
                 {
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), 1.2f);
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), 1f);
-
+                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), tileUnderMouse.originalScale, 1.2f, 0.3f);
                 }
             }
 
             if (tileUnderMouse == null && currentHoveredTile != null)
             {
-                DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), 1f);
+                DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), tileUnderMouse.originalScale, 1.2f, 0.3f);
                 currentHoveredTile = null;
             }
         }
@@ -139,61 +126,27 @@ public class TileManager : MonoBehaviour
 
     #region --- Game Setup / Mode ---
     private void RestartLevelHandler()
-    {
-        RestartLevel();
+    {   
+        foreach(Tile go in selectingTiles)
+        {   
+            currentTiles.Remove(go);
+            Destroy(go.gameObject);
+        }     
+        modeHandler.OnResetLevel();
+      
     }
 
-    private void RestartLevel()
+    public void ContinueLevel()
     {
-        GenerateNewLevel(GameManager.instance.level);
-        currentTiles.Clear();
-        selectingTiles.Clear();
-    }
-    private void HandleContinueLevel()
-    {
-        GenerateNewGame(GameMode.Level);
-    }
+        modeHandler.OnContinueLevel();
 
-    public void GenerateNewGame(GameMode gameMode)
-    {
-        switch (gameMode)
-        {
-            default:
-            case GameMode.Level:
-                GenerateNewLevel(GameManager.instance.level);
-                break;
-            case GameMode.Infinite:
-                GenerateInfiniteTile(4);
-                break;
-        }
     }
+   
+ 
+  
 
-    private void GenerateInfiniteTile(int maxLayer)
-    {
-        for (int i = 0; i < maxLayer; i++)
-        {
-            //LevelManager.Instance.GenerateOneLayer(i, 21);
-        }
-
-        RefreshCurrentTilesFromHierarchy();
-     
-        GameManager.instance.ChangeState(GameState.Playing);
-    }
-
-    private void GenerateNewLevel(int level)
-    {
-        for (int i = currentTiles.Count - 1; i >= 0; i--)
-        {
-            Destroy(currentTiles[i].gameObject);
-        }
-        SortTiles.Sort(currentTiles);
-        SortTiles.ActivateShadows(currentTiles);
-        GameManager.instance.ChangeState(GameState.Playing);
-        LevelDataManager.LoadFromSO(PlayerPrefs.GetInt("level"), tilePrefab, this.transform);
-        RefreshCurrentTilesFromHierarchy();
-    }
-
-    private void RefreshCurrentTilesFromHierarchy()
+  
+    public void RefreshCurrentTilesFromHierarchy()
     {
         currentTiles = GetComponentsInChildren<Tile>().ToList();
         
@@ -247,9 +200,8 @@ public class TileManager : MonoBehaviour
             modeHandler?.OnWinCheck(currentTiles, selectingTiles);
             return;
         }
-
+        SortTileAndActivateShadow();
         modeHandler?.OnTileSelected(tile);
-        SoundManager.Instance?.PlaySFX(clickSoundClip, 1f);
     }
 
     #endregion
@@ -282,7 +234,7 @@ public class TileManager : MonoBehaviour
                 break;
             }
         }
-
+        SortTileAndActivateShadow();
         EventManager.OnTileSelected?.Invoke(tile);
 
         CheckMatch3Condition(tile.tileData);
@@ -387,7 +339,6 @@ public class TileManager : MonoBehaviour
         EventManager.OnTilesRemoved?.Invoke(tile.tileData);
 
         modeHandler?.OnTilesMatched(tile.tileData,tile);
-        SoundManager.Instance?.PlaySFX(clickSoundClip, 1f);
 
         Debug.Log("[TileManager] PowerUp used - removed 3 tiles of type: " + tile.tileData.name);
     }
@@ -412,7 +363,6 @@ public class TileManager : MonoBehaviour
         if (tile.gameObject != null)
             Destroy(tile.gameObject);
 
-        SoundManager.Instance?.PlaySFX(clickSoundClip, 1f);
         Debug.Log("[TileManager] Discard used - removed 1 tile");
     }
 
@@ -425,22 +375,25 @@ public class TileManager : MonoBehaviour
     {
         if (currentTiles == null || currentTiles.Count <= 1) return;
 
-        List<Vector3> positions = currentTiles.Select(t => t.transform.position).ToList();
+        List<TileDataSO> dataList = currentTiles
+            .Select(t => t.tileData)
+            .ToList();
 
-        for (int i = positions.Count - 1; i > 0; i--)
+        for (int i = dataList.Count - 1; i > 0; i--)
         {
             int rand = Random.Range(0, i + 1);
-            (positions[i], positions[rand]) = (positions[rand], positions[i]);
+            (dataList[i], dataList[rand]) = (dataList[rand], dataList[i]);
         }
 
-        // Gán lại
         for (int i = 0; i < currentTiles.Count; i++)
         {
-            if (currentTiles[i] == null) continue;
-            currentTiles[i].transform.position = positions[i];
-        }
+            currentTiles[i].tileData = dataList[i];
 
-        Debug.Log("[TileManager] Shuffle completed");
+            if (currentTiles[i].TryGetComponent(out Tile tile))
+            {
+                tile.ApplyData();
+            }
+        }
     }
     public void RefreshBoard()
     {
@@ -492,9 +445,9 @@ public class TileManager : MonoBehaviour
         List<Tile> hintTiles = group.Take(3).ToList();
 
         foreach (var tile in hintTiles)
-        {
+        {   
             if (tile == null) continue;
-            DOAnimationManager.ScaleBounce(tile.transform.Find("Container"), 1.3f, 0.1f);
+            DOAnimationManager.ScaleBounce(tile.transform.Find("Container"),tile.originalScale, 1.3f, 0.1f);
         }
 
         Debug.Log("[TileManager] Hint shown");
@@ -514,7 +467,7 @@ public class TileManager : MonoBehaviour
             }
 
             last.gameObject.SetActive(true);
-
+            last.isClicked = false;
             selectingTiles.Remove(last);
 
             if (!currentTiles.Contains(last))
@@ -538,19 +491,32 @@ public class TileManager : MonoBehaviour
     public void OnHintButton() => Hint();
     public void OnPowerUpButton() => PowerUp();
 
-
-    public void SortTileAndActivateShadow(List<Tile> newTiles)
+  
+    public void SortTileAndActivateShadow()
     {
-        if (newTiles == null || newTiles.Count == 0) return;
+        SortTiles.Sort(currentTiles);
+        SortTiles.ActivateShadows(currentTiles);
+    }
+    public void SortTileAndActivateShadow(List<Tile> tiles)
+    {   
+        if (tiles == null || tiles.Count == 0) return;
 
-        foreach (var t in newTiles)
+        foreach (var t in tiles)
         {
             if (t == null) continue;
-            if (!currentTiles.Contains(t)) currentTiles.Add(t);
+            if (!tiles.Contains(t)) tiles.Add(t);
         }
 
-      
+         SortTiles.Sort(tiles);
+        SortTiles.ActivateShadows(tiles);
     }
 
     #endregion
+
+
+    private IEnumerator WaitForOneFrame()
+    {
+        yield return null;
+        modeHandler.Initialize();
+    }
 }

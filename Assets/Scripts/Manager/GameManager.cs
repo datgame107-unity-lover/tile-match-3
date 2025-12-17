@@ -20,7 +20,8 @@ public class GameManager : MonoBehaviour
     public GameState currentState { get; private set; }
     public GameMode gameMode { get; private set; }
     public int level;
-
+    public int flowerReward = 10;
+    public int diamondReward = 1;
     private void Awake()
     {
         if(instance == null)
@@ -33,7 +34,7 @@ public class GameManager : MonoBehaviour
             return;
         }
         //InnitialData();
-        level = PlayerPrefs.GetInt("level");
+         PlayerPrefs.SetInt("level",level);
         DontDestroyOnLoad(instance);
        
     }
@@ -101,28 +102,27 @@ public class GameManager : MonoBehaviour
 
     private void HandleWin()
     {
-        PlayerPrefs.SetInt("level", level+1);
-        PlayerPrefs.Save();
-        SoundManager.Instance.PlayWinClip(1);
+        SaveLevel(level + 1);
         EventManager.OnPlayerWon?.Invoke();
+
     }
 
     private void HandleLose()
     {
 
         EventManager.OnPlayerLost?.Invoke();
-        SoundManager.Instance.PlayWinClip(1);
 
     }
     public void ChangeMode(GameMode mode)
     {
         this.gameMode = mode;
+        EventManager.OnModeChanged?.Invoke(mode);
     }
+
     public void SaveLevel(int newLevel)
     {
         level = newLevel;
         PlayerPrefs.SetInt("level", level);
         PlayerPrefs.Save();
-        Debug.Log($"💾 Đã lưu level: {level}");
     }
 }

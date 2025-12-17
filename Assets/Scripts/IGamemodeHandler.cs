@@ -5,4 +5,8 @@ public interface IGameModeHandler
     void OnTileSelected(Tile tile);
     void OnTilesMatched(TileDataSO tileData,Tile tile);
     void OnWinCheck(List<Tile> currentTiles, List<Tile> selectingTiles);
+    void OnResetLevel();
+    void OnContinueLevel();
+    void OnPlayOn();
+    void Initialize();
 }

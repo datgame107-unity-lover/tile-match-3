@@ -22,16 +22,22 @@ public class LevelEditorManager : MonoBehaviour
     private void OnEnable()
     {
         EventManager.OnSavingNewLevel += SaveNewLevelHandler;
+        EventManager.OnChoseLevel += ChooseLevelHandler;
     }
     private void OnDisable()
     {
         EventManager.OnSavingNewLevel -= SaveNewLevelHandler;
+        EventManager.OnChoseLevel -= ChooseLevelHandler;
 
+    }
+    public void ChooseLevelHandler(int level)
+    {
+        currentLevel = level;
     }
     public void SaveNewLevelHandler()
     {
-
-        if (LevelDataManager.SaveToSO(grid, currentLevel+1))
+        if (currentLevel == 0) currentLevel = 1;
+        if (LevelDataManager.SaveToSO(grid, currentLevel))
         {
             print("ok");
             EventManager.OnSavedNewLevel?.Invoke();

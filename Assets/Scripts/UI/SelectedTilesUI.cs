@@ -34,7 +34,7 @@ public class SelectedTilesUI : MonoBehaviour
 
     private void PlayOnHandler()
     {
-        for (int i = selectedTilePanel.childCount - 1; i >= selectedTilePanel.childCount - 4; i--)
+        for (int i = selectedTilePanel.childCount - 1; i >= selectedTilePanel.childCount - 3    ; i--)
         {
             Destroy(selectedTilePanel.GetChild(i).gameObject);
         }

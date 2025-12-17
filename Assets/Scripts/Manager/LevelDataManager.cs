@@ -53,15 +53,25 @@ public static class LevelDataManager
         {
             if (tile == null) continue;
 
+            Transform shadowTf = tile.transform.Find("Container/Shadow");
+            bool shadowActive = false;
+
+            if (shadowTf != null)
+            {
+                shadowActive = shadowTf.gameObject.activeSelf;
+            }
+
             asset.tiles.Add(new TileSaveData
             {
                 tile = tile.tileData,
                 worldPos = tile.transform.position,
                 layer = tile.layer,
                 isBlocked = tile.isBlocked,
-                clicked = tile.isClicked
+                clicked = tile.isClicked,
+                shadow = shadowActive
             });
         }
+
 
         // Tạo folder nếu chưa có
         if (!Directory.Exists(folderPath))
@@ -80,7 +90,7 @@ public static class LevelDataManager
 #endif
     }
 
-    public static void LoadFromSO(int levelIndex, GameObject tilePrefab, Transform gridParent)
+    public static List<Tile> LoadFromSO(int levelIndex, GameObject tilePrefab, Transform gridParent)
     {
 #if UNITY_EDITOR
         string filePath = $"{folderPath}/level_{levelIndex}.asset";
@@ -124,11 +134,12 @@ public static class LevelDataManager
 
             tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite =
                 saveData.tile.sprite;
+            tile.transform.Find("Container/Shadow").gameObject.SetActive(saveData.shadow);
 
-            loadedTiles.Add(tile);
+loadedTiles.Add(tile);
         }
-
         Debug.Log($"✅ Loaded Level_{levelIndex}.asset thành công!");
+        return loadedTiles;
 
 #else
         Debug.LogWarning("⚠ LoadFromSO chỉ hoạt động trong Editor!");

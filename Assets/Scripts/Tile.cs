@@ -11,12 +11,16 @@ public class Tile : MonoBehaviour
     public int layer;              // Z-logic của tile
     public bool isBlocked = true;
     public bool isClicked;
-
+    public Vector3 originalScale;
     private SpriteRenderer[] renderers;
+    [Header("Render")]
+    [SerializeField] private SpriteRenderer spriteRenderer;
 
+  
     private void Awake()
     {
         renderers = GetComponentsInChildren<SpriteRenderer>();
+        originalScale = transform.Find("Container").localScale;
     }
 
     public void UpdateSortingOrder()
@@ -50,5 +54,23 @@ public class Tile : MonoBehaviour
         transform.position = pos;
         worldPos = pos;
         UpdateSortingOrder();
+    }
+    public void ApplyData()
+    {
+        if (tileData == null) return;
+
+        spriteRenderer.sprite = tileData.sprite;
+    }
+
+    public void SwapData(Tile other)
+    {
+        if (other == null) return;
+
+        TileDataSO temp = tileData;
+        tileData = other.tileData;
+        other.tileData = temp;
+
+        ApplyData();
+        other.ApplyData();
     }
 }

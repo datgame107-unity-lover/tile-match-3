@@ -90,7 +90,7 @@ public class CurrencyManager : MonoBehaviour
         {
             currencies[type] = PlayerPrefs.GetInt(type.ToString(), currencies[type]);
         }
-        currencies[CurrencyType.Heart] = 0;
+        currencies[CurrencyType.Heart] = 1;
         heartTimer = PlayerPrefs.GetFloat(HEART_TIMER_KEY, 0);
         
     }

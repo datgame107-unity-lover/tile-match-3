@@ -32,5 +32,6 @@ public static class EventManager
     public static Action<QuestDataSO> OnQuestClaimed;
     public static Action<ShopItemSO> OnBoughtItem;
     public static Action OnTransactionComplete;
+    public static Action<QuestDataSO> OnQuestCompleted;
 
 }

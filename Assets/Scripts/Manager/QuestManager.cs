@@ -82,7 +82,11 @@ public class QuestManager : MonoBehaviour
         => UpdateQuestProgress(QuestType.CollectItem, 1, tile);
 
 
-    public void UpdateQuestProgress(QuestType type, int amount, TileDataSO tileTarget = null)
+    public void UpdateQuestProgress(
+     QuestType type,
+     int amount,
+     TileDataSO tileTarget = null
+ )
     {
         foreach (var q in dailyQuestsData)
         {
@@ -92,21 +96,30 @@ public class QuestManager : MonoBehaviour
                 progresses[q.questID] = p;
             }
 
-            if (p.isClaimed) continue;
+            if (p.isClaimed)
+                continue;
 
-            if (q.type == type)
+            if (q.type != type)
+                continue;
+
+            if (type == QuestType.CollectItem && q.targetTile != tileTarget)
+                continue;
+
+            int before = p.currentAmount;
+
+            p.currentAmount += amount;
+            p.currentAmount = Mathf.Min(p.currentAmount, q.targetAmount);
+
+            // ===== QUEST JUST COMPLETED =====
+            if (before < q.targetAmount && p.currentAmount >= q.targetAmount)
             {
-                if (type == QuestType.CollectItem && q.targetTile != tileTarget)
-                    continue;
-
-                p.currentAmount += amount;
-                p.currentAmount = Mathf.Min(p.currentAmount, q.targetAmount);
-                print(p.currentAmount);
+                EventManager.OnQuestCompleted?.Invoke(q);
             }
         }
-        
+
         SaveProgress();
     }
+
 
 
     public void ClaimReward(string questID)
@@ -144,7 +157,6 @@ public class QuestManager : MonoBehaviour
 
         dailyQuestChestClaimed = true;
 
-        // EXAMPLE reward
         CurrencyManager.Instance.Add(CurrencyType.Flower, 100);
 
         SaveProgress();

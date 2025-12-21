@@ -58,6 +58,7 @@ public class SoundManager : MonoBehaviour
         EventManager.OnQuestClaimed += HandleQuestClaimed;
         EventManager.OnBoughtItem += HandleBoughtItem;
         EventManager.OnTransactionComplete += HandleTransactionComplete;
+        EventManager.OnQuestCompleted += HandleQuestClaimed;
     }
     private void OnDisable()
     {
@@ -68,6 +69,7 @@ public class SoundManager : MonoBehaviour
         EventManager.OnQuestClaimed -= HandleQuestClaimed;
         EventManager.OnBoughtItem -= HandleBoughtItem;
         EventManager.OnTransactionComplete -= HandleTransactionComplete;
+        EventManager.OnQuestCompleted -= HandleQuestClaimed;
 
     }
     private void HandleTransactionComplete()

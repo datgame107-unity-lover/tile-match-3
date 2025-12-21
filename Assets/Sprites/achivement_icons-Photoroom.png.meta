@@ -1,0 +1,1087 @@
+fileFormatVersion: 2
+guid: 708c548507a67fa48ae0bc1edb3d7cd0
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6618701353589511848
+    second: achivement_icons-Photoroom_0
+  - first:
+      213: 7828456088180278244
+    second: achivement_icons-Photoroom_1
+  - first:
+      213: -1546925214065084519
+    second: achivement_icons-Photoroom_2
+  - first:
+      213: 5232762615932684137
+    second: achivement_icons-Photoroom_3
+  - first:
+      213: -1193503218763317330
+    second: achivement_icons-Photoroom_4
+  - first:
+      213: 1280417161160366593
+    second: achivement_icons-Photoroom_5
+  - first:
+      213: -2183488662054917531
+    second: achivement_icons-Photoroom_6
+  - first:
+      213: 8192572854777636249
+    second: achivement_icons-Photoroom_7
+  - first:
+      213: -8011131156439126491
+    second: achivement_icons-Photoroom_8
+  - first:
+      213: -3414380542766119614
+    second: achivement_icons-Photoroom_9
+  - first:
+      213: -3142076612711029225
+    second: achivement_icons-Photoroom_10
+  - first:
+      213: 6461229100237950341
+    second: achivement_icons-Photoroom_11
+  - first:
+      213: 1579443681726931029
+    second: achivement_icons-Photoroom_12
+  - first:
+      213: -7983196584910658559
+    second: achivement_icons-Photoroom_13
+  - first:
+      213: -437263354004110828
+    second: achivement_icons-Photoroom_14
+  - first:
+      213: 3330871831752636474
+    second: achivement_icons-Photoroom_15
+  - first:
+      213: -6868087441447445229
+    second: achivement_icons-Photoroom_16
+  - first:
+      213: 6322172875563440924
+    second: achivement_icons-Photoroom_17
+  - first:
+      213: 6917326132202958626
+    second: achivement_icons-Photoroom_18
+  - first:
+      213: 5019726784646738642
+    second: achivement_icons-Photoroom_19
+  - first:
+      213: -60217605234260479
+    second: achivement_icons-Photoroom_20
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: PlayGame1
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 584
+        width: 89
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e5cf73ea3c50bf044907614309fe1072
+      internalID: -567858879
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayGame2
+      rect:
+        serializedVersion: 2
+        x: 156
+        y: 582
+        width: 92
+        height: 92
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e217839c447d83f43b617659841c1487
+      internalID: 1672855373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PlayGame3
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 581
+        width: 105
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d7653a976fe33a04d902fb70a7de7f7e
+      internalID: -1644857060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClearLevel1
+      rect:
+        serializedVersion: 2
+        x: 460
+        y: 588
+        width: 70
+        height: 82
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f5ec5cc8082b97449b0e345e502a7546
+      internalID: 1800497195
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClearLevel2
+      rect:
+        serializedVersion: 2
+        x: 601
+        y: 579
+        width: 79
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ca48f8116a63c3469596aecfe756fb7
+      internalID: -366177405
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ClearLevel3
+      rect:
+        serializedVersion: 2
+        x: 743
+        y: 579
+        width: 82
+        height: 100
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4af0aad85f556dc42801ccf825481c53
+      internalID: 198576247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: clearlevel1
+      rect:
+        serializedVersion: 2
+        x: 26
+        y: 439
+        width: 87
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3fcf5ca2747a8e241b041dc1f5e933b4
+      internalID: 523031206
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: clearlevel2
+      rect:
+        serializedVersion: 2
+        x: 155
+        y: 439
+        width: 99
+        height: 103
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 893a465a0833cf64c9a593f245749520
+      internalID: -762052078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: clearlevel3
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 433
+        width: 115
+        height: 115
+      alignment: 9
+      pivot: {x: 0.5495178, y: 0.6165124}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 739b9427bfc679043ae2dbbeacdf40b8
+      internalID: 1942679784
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MatchTiles1
+      rect:
+        serializedVersion: 2
+        x: 436
+        y: 459
+        width: 123
+        height: 59
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5f6e49d05996bce478bd5d785ad19559
+      internalID: 1518256302
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MatchTiles2
+      rect:
+        serializedVersion: 2
+        x: 580
+        y: 439
+        width: 118
+        height: 102
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8bf8b92a53bb9143b68d8d6c83259f7
+      internalID: -1708968077
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MatchTiles3
+      rect:
+        serializedVersion: 2
+        x: 710
+        y: 420
+        width: 142
+        height: 139
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8a3423dd16a08a42b18b2ce89bcabb4
+      internalID: -288977976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UseBooster1
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 281
+        width: 142
+        height: 139
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ec6972c307a198142b5f1e9e655c6a54
+      internalID: -2036449590
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UseBooster2
+      rect:
+        serializedVersion: 2
+        x: 142
+        y: 281
+        width: 142
+        height: 139
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33bcfded031cc3943af7e5f30d2bbea2
+      internalID: 5019726784646738642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UseBooster3
+      rect:
+        serializedVersion: 2
+        x: 284
+        y: 281
+        width: 142
+        height: 139
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3eb6a520816277498f56f0c1f4d77ad
+      internalID: 1927150761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HighScore1
+      rect:
+        serializedVersion: 2
+        x: 450
+        y: 302
+        width: 93
+        height: 93
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ccc9d6b10dccc4f42990417efcb1a822
+      internalID: 680791976
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HighScore2
+      rect:
+        serializedVersion: 2
+        x: 604
+        y: 301
+        width: 71
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9e86df8af4d4ddc4ca040f06daf1b4c8
+      internalID: 1290222627
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: HighScore3
+      rect:
+        serializedVersion: 2
+        x: 725
+        y: 297
+        width: 118
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 79f3f110d55fe784aa83ef194d22b671
+      internalID: -232123447
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnDiamond1
+      rect:
+        serializedVersion: 2
+        x: 885
+        y: 302
+        width: 100
+        height: 93
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 948f071f70f948948b6ab3a80ce847cd
+      internalID: 677910967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnDiamond2
+      rect:
+        serializedVersion: 2
+        x: 1024
+        y: 300
+        width: 103
+        height: 94
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 76d28529dbaa8a842a194dbda2580899
+      internalID: -761698076
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnDiamond3
+      rect:
+        serializedVersion: 2
+        x: 1160
+        y: 300
+        width: 102
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e79c7cfa47fb794f825cb2bfb216166
+      internalID: -1648958553
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnFlower1
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 162
+        width: 71
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d9787d96774169f4da4f320b78f20837
+      internalID: -2002089658
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnFlower2
+      rect:
+        serializedVersion: 2
+        x: 161
+        y: 167
+        width: 90
+        height: 91
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 316295357e89dcc4baec1335fde92ed4
+      internalID: 584010820
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: EarnFlower3
+      rect:
+        serializedVersion: 2
+        x: 289
+        y: 161
+        width: 109
+        height: 101
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: af0ad10f4fa0fd0408142d801253eedc
+      internalID: -449234390
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendDiamond
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 167
+        width: 101
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 36637b1dca2a99c4586698a675259d13
+      internalID: -399101760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendDiamond2
+      rect:
+        serializedVersion: 2
+        x: 590
+        y: 161
+        width: 101
+        height: 99
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae03454a29a162243aecc601825bbf58
+      internalID: 78124619
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendDiamond3
+      rect:
+        serializedVersion: 2
+        x: 733
+        y: 167
+        width: 102
+        height: 89
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64ea4faceb1847e47a9cd9c93475b1c1
+      internalID: -1290577959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoseHeart1
+      rect:
+        serializedVersion: 2
+        x: 883
+        y: 169
+        width: 102
+        height: 85
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30ed2e46b5569d14bbf0ad4356455ff6
+      internalID: -676803582
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoseHeart2
+      rect:
+        serializedVersion: 2
+        x: 1028
+        y: 167
+        width: 95
+        height: 88
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e93488fb6a42d6249a2cca9d276d4c90
+      internalID: 253858710
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoseHeart3
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 168
+        width: 98
+        height: 87
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0a70e8ddfefa9a64ba92d75ec7f5ff47
+      internalID: 653076852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendFlower1
+      rect:
+        serializedVersion: 2
+        x: 33
+        y: 34
+        width: 69
+        height: 75
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b535d67118a5d9549882c5379731f3f3
+      internalID: 1237424265
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendFlower2
+      rect:
+        serializedVersion: 2
+        x: 159
+        y: 24
+        width: 93
+        height: 96
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0fafbe9287f832d45ae69515f1ba23d2
+      internalID: 793425598
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: SpendFlower3
+      rect:
+        serializedVersion: 2
+        x: 296
+        y: 22
+        width: 93
+        height: 101
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2e343585320f2a94d80b766b017f032f
+      internalID: 172667100
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoginDays1
+      rect:
+        serializedVersion: 2
+        x: 451
+        y: 24
+        width: 90
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1313be7f2c8850349bbcc1a7c4b8c5cc
+      internalID: -1181603726
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoginDays2
+      rect:
+        serializedVersion: 2
+        x: 593
+        y: 24
+        width: 94
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9cf29f96bd3065e47bcac134bf11486b
+      internalID: -775799970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: LoginDays3
+      rect:
+        serializedVersion: 2
+        x: 731
+        y: 17
+        width: 105
+        height: 107
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3b37d3c9f5b0c0542b6d1cf0382b4ec7
+      internalID: -1992804351
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CompleteQuest1
+      rect:
+        serializedVersion: 2
+        x: 892
+        y: 36
+        width: 85
+        height: 73
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2c1a7d7bced60543977c2d77674b30a
+      internalID: 1214391521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CompleteQuest2
+      rect:
+        serializedVersion: 2
+        x: 1026
+        y: 24
+        width: 101
+        height: 98
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a9377a67b4eb51e47b2dcb1ae685be3f
+      internalID: 1954538534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CompleteQuest3
+      rect:
+        serializedVersion: 2
+        x: 1162
+        y: 20
+        width: 98
+        height: 104
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4614342c82b8b4479df54aac21dd0e4
+      internalID: 1012719768
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: a8d5c825bbea5ad408d70d7711f845a5
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries:
+      - key: SpriteEditor.SliceOnImport
+        value: False
+      - key: SpriteEditor.SliceSettings
+        value: '{"sliceOnImport":false,"gridCellCount":{"x":9.0,"y":5.0},"gridSpriteSize":{"x":142.0,"y":139.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+    nameFileIdTable:
+      ClearLevel1: 1800497195
+      ClearLevel2: -366177405
+      ClearLevel3: 198576247
+      CompleteQuest1: 1214391521
+      CompleteQuest2: 1954538534
+      CompleteQuest3: 1012719768
+      EarnDiamond1: 677910967
+      EarnDiamond2: -761698076
+      EarnDiamond3: -1648958553
+      EarnFlower1: -2002089658
+      EarnFlower2: 584010820
+      EarnFlower3: -449234390
+      HighScore1: 680791976
+      HighScore2: 1290222627
+      HighScore3: -232123447
+      LoginDays1: -1181603726
+      LoginDays2: -775799970
+      LoginDays3: -1992804351
+      LoseHeart1: -676803582
+      LoseHeart2: 253858710
+      LoseHeart3: 653076852
+      MatchTiles1: 1518256302
+      MatchTiles2: -1708968077
+      MatchTiles3: -288977976
+      PlayGame1: -567858879
+      PlayGame2: 1672855373
+      PlayGame3: -1644857060
+      SpendDiamond: -399101760
+      SpendDiamond2: 78124619
+      SpendDiamond3: -1290577959
+      SpendFlower1: 1237424265
+      SpendFlower2: 793425598
+      SpendFlower3: 172667100
+      UseBooster1: -2036449590
+      UseBooster2: 5019726784646738642
+      UseBooster3: 1927150761
+      clearlevel1: 523031206
+      clearlevel2: -762052078
+      clearlevel3: 1942679784
+      highscore1: -1893976418
+      highscore2: 1336381057
+      highscore3: 85426990
+      spendflower: -1359584508
+      spendflower1: 1003907334
+      spendflower3: 1305548874
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

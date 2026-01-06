@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Thanks for coming back.
   target: 50
   rewards: []
+  disabled: 0

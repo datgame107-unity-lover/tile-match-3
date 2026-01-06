@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -57,13 +59,18 @@ public class AchievementManager : MonoBehaviour
         EventManager.OnHintUsed +=HandleHintUsed;
         EventManager.OnPowerUpUsed += HandlePowerUpUsed ;
         EventManager.OnUndoUsed += HandleUndoUsed;
-        EventManager.OnQuestClaimed += HandleQuestClaimed; ;
+        EventManager.OnQuestClaimed += HandleQuestClaimed;
+        EventManager.OnHighScoreChanged += HandleHighScoreSchaged;
     }
 
     private void OnDisable()
     {
         EventManager.OnCurrencyChanged -= HandleCurrencyChanged;
         EventManager.OnPlayerLost -= HandlePlayerLost;
+    }
+    private void HandleHighScoreSchaged(int score)
+    {
+        UpdateProgress(AchievementType.HighScore, score);
     }
     private void HandleCurrencyChanged(CurrencyType type, int amount)
     {
@@ -130,6 +137,23 @@ public class AchievementManager : MonoBehaviour
             if (progress.current >= data.target) continue;
 
             progress.current += amount;
+            progress.current = Mathf.Min(progress.current, data.target);
+        }
+
+        SaveAchivements();
+    }
+    public void UpdateProgress(AchievementType type,int amount)
+    {
+        foreach (var data in achivementDatas)
+        {
+            if (data.type != type) continue;
+
+            var progress = GetProgress(data.id);
+
+            if (progress.isClaimed) continue;
+            if (progress.current >= data.target) continue;
+
+            progress.current =amount;
             progress.current = Mathf.Min(progress.current, data.target);
         }
 
@@ -206,6 +230,8 @@ public class AchievementManager : MonoBehaviour
     {
         progresses.Clear();
 
+       
+
         if (!PlayerPrefs.HasKey(SAVE_KEY))
         {
             InitEmptyProgress();
@@ -219,9 +245,9 @@ public class AchievementManager : MonoBehaviour
         foreach (var p in save.progresses)
             progresses[p.id] = p;
 
-        // đảm bảo achievement mới thêm vẫn có progress
         InitEmptyProgress();
     }
+
 
     private void InitEmptyProgress()
     {

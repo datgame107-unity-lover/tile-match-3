@@ -19,3 +19,4 @@ MonoBehaviour:
   description: NPCs trust you now.
   target: 200
   rewards: []
+  disabled: 0

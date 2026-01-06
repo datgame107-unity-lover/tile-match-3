@@ -19,3 +19,4 @@ MonoBehaviour:
   description: "Flowers don\u2019t grow themselves."
   target: 10
   rewards: []
+  disabled: 0

@@ -53,10 +53,10 @@ public class PlayingUI : MonoBehaviour
         settingButton.onClick.AddListener(OnSettingButtonClicked);
         settingUIOverlay.onClick.AddListener(CloseSettingUI);
 
-        SetupItemButton(hintButton, CurrencyType.Hint, tileManager.OnHintButton);
-        SetupItemButton(shuffleButton, CurrencyType.Shuffle, tileManager.OnShuffleButton);
-        SetupItemButton(undoButton, CurrencyType.Undo, tileManager.OnUndoButton);
-        SetupItemButton(powerUpButton, CurrencyType.PowerUp, tileManager.OnPowerUpButton);
+        SetupItemButton(hintButton, CurrencyType.Hint, tileManager.Hint);
+        SetupItemButton(shuffleButton, CurrencyType.Shuffle, tileManager.Shuffle);
+        SetupItemButton(undoButton, CurrencyType.Undo, tileManager.Undo);
+        SetupItemButton(powerUpButton, CurrencyType.PowerUp, tileManager.PowerUp);
     }
 
     private void OnDisable()
@@ -77,11 +77,11 @@ public class PlayingUI : MonoBehaviour
     }
 
     #region --- Item Button Helper ---
-    private void SetupItemButton(GameObject button, CurrencyType type, System.Action onUse)
+    private void SetupItemButton(GameObject button, CurrencyType type, System.Action onUsed)
     {
         button.GetComponentInChildren<Button>().onClick.AddListener(() =>
         {
-            int count = PlayerPrefs.GetInt(type.ToString(), 0);
+            int count = CurrencyManager.Instance.Get(type);
 
             if (count <= 0)
             {
@@ -89,12 +89,9 @@ public class PlayingUI : MonoBehaviour
                 return;
             }
 
-            count--;
-            CurrencyManager.Instance.Spend(type, count);
 
             button.transform.GetComponentInChildren<TextMeshProUGUI>().text = count == 0 ? "+" : count.ToString();
-
-            onUse?.Invoke();
+            onUsed?.Invoke();
         });
     }
 

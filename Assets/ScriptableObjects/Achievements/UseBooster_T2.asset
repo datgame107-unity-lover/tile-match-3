@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Boosters make life easier.
   target: 50
   rewards: []
+  disabled: 0

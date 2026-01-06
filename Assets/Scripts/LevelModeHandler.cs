@@ -15,16 +15,11 @@ public class LevelModeHandler : IGameModeHandler
     public void Initialize()
     {
         GameManager.instance.ChangeMode(GameMode.Level);
-        List<Tile> tileList =  LevelDataManager.LoadFromSO(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
+        List<Tile> tileList = LevelDataManager.LoadFromSORuntime(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
         manager.currentTiles = tileList;
-        manager.SortTileAndActivateShadow();
     }
 
-    private IEnumerator SortNextFrame()
-    {
-        yield return null; // chờ Unity update hierarchy
-        manager.SortTileAndActivateShadow();
-    }
+   
     public void OnPlayOn()
     {
     }
@@ -32,8 +27,7 @@ public class LevelModeHandler : IGameModeHandler
     public void OnResetLevel()
     {   
         manager.selectingTiles = new List<Tile>();
-        manager.currentTiles =  LevelDataManager.LoadFromSO(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
-        manager.SortTileAndActivateShadow();
+        manager.currentTiles =  LevelDataManager.LoadFromSORuntime(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
 
     }
 
@@ -58,9 +52,8 @@ public class LevelModeHandler : IGameModeHandler
 
     public void OnContinueLevel()
     {
-        LevelDataManager.LoadFromSO(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
+        LevelDataManager.LoadFromSORuntime(PlayerPrefs.GetInt("level"), manager.tilePrefab, manager.transform);
         manager. RefreshCurrentTilesFromHierarchy();
-        manager. SortTileAndActivateShadow();
         GameManager.instance.ChangeState(GameState.Playing);
     }
 

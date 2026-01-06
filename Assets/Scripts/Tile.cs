@@ -1,76 +1,95 @@
-﻿using DG.Tweening;
-using System;
+﻿using System;
 using UnityEngine;
 
 [Serializable]
 public class Tile : MonoBehaviour
 {
+    #region === DATA ===
     [Header("Data")]
     public TileDataSO tileData;
     public Vector3 worldPos;
-    public int layer;              // Z-logic của tile
+    public int layer;                  // Layer cao = ở trên
     public bool isBlocked = true;
     public bool isClicked;
-    public Vector3 originalScale;
-    private SpriteRenderer[] renderers;
-    [Header("Render")]
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    #endregion
 
-  
+    #region === REFS ===
+    [Header("Refs")]
+    [SerializeField] private TileUI ui;
+    private SpriteRenderer[] renderers;
+    #endregion
+
+    #region === UNITY ===
     private void Awake()
     {
+        if (ui == null)
+            ui = GetComponentInChildren<TileUI>();
+       
         renderers = GetComponentsInChildren<SpriteRenderer>();
-        originalScale = transform.Find("Container").localScale;
     }
+    #endregion
 
+    #region === SORTING ORDER ===
     public void UpdateSortingOrder()
     {
-        if (renderers == null || renderers.Length == 0)
-            renderers = GetComponentsInChildren<SpriteRenderer>();
-
         float y = transform.position.y;
 
-        int baseOrder = layer * 1000 + (int)(-y * 100);
+        int baseOrder = layer * 1000 + Mathf.RoundToInt(-y * 100);
+        int order = baseOrder;
 
         foreach (var r in renderers)
         {
-            int order = baseOrder;
-
-            if (r.gameObject.name.ToLower().Contains("shadow"))
-                order -= 1; // shadow nằm dưới 1 lớp
-
             r.sortingOrder = order;
+            order++;
         }
     }
-
-    public void AddLayer(int amount)
+    public Vector3 GetOriginalScale()
     {
-        layer += amount;
-        UpdateSortingOrder();
+        return ui.OriginalScale;
     }
+    #endregion
 
+    #region === POSITION ===
     public void SetWorldPosition(Vector3 pos)
     {
-        transform.position = pos;
         worldPos = pos;
+        transform.position = pos;
         UpdateSortingOrder();
     }
+    #endregion
+
+    #region === DATA ===
     public void ApplyData()
     {
         if (tileData == null) return;
 
-        spriteRenderer.sprite = tileData.sprite;
+        ui.SetSprite(tileData.sprite);
     }
 
     public void SwapData(Tile other)
     {
-        if (other == null) return;
-
-        TileDataSO temp = tileData;
-        tileData = other.tileData;
-        other.tileData = temp;
+        (tileData, other.tileData) = (other.tileData, tileData);
 
         ApplyData();
         other.ApplyData();
     }
+    #endregion
+
+    #region === LAYER & VISUAL ===
+    public void SetLayer(int newLayer)
+    {
+        layer = newLayer;
+        UpdateSortingOrder();
+    }
+
+    public void UpdateVisual(int maxLayer)
+    {
+        ui.UpdateLayerVisual(layer, maxLayer);
+    }
+
+    public void SetShadow(bool value)
+    {
+        ui.SetShadow(value);
+    }
+    #endregion
 }

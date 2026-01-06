@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Higher numbers, bigger smiles.
   target: 10
   rewards: []
+  disabled: 0

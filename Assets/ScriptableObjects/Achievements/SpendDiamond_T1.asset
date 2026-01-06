@@ -15,7 +15,8 @@ MonoBehaviour:
   type: 9
   id: SpendDiamond_T1
   name: Luxury Taste
-  icon: {fileID: 0}
+  icon: {fileID: 677910967, guid: 708c548507a67fa48ae0bc1edb3d7cd0, type: 3}
   description: Worth every diamond. Probably.
   target: 10
   rewards: []
+  disabled: 0

@@ -1,51 +1,47 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UnityEditor;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public static class LevelDataManager
 {
-    private static string folderPath = "Assets/Levels";
+    private static string editorFolderPath = "Assets/Resources/Levels";
+    private const string runtimeResourcePath = "Levels";
 
-    public static int GetTotalLevel()
+    // =======================
+    // EDITOR
+    // =======================
+
+    public static int GetTotalLevelEditor()
     {
-        int totalLevel = 0;
-        if (!Directory.Exists(folderPath))
-        {
-            Debug.LogWarning("📁 Thư mục Assets/Levels chưa tồn tại!");
+#if UNITY_EDITOR
+        if (!Directory.Exists(editorFolderPath))
             return 0;
-        }
 
-        string[] files = Directory.GetFiles(folderPath, "Level_*.asset");
+        string[] files = Directory.GetFiles(editorFolderPath, "level_*.asset");
+        if (files.Length == 0) return 0;
 
-        if (files.Length == 0)
-        {
-            Debug.Log("⚠️ Không có level nào được lưu!");
-        }
-        else
-        {
-            var levelNumbers = files
+        return files
             .Select(f => Path.GetFileNameWithoutExtension(f))
             .Select(name =>
             {
                 string[] parts = name.Split('_');
-                if (parts.Length > 1 && int.TryParse(parts[1], out int n))
-                    return n;
-                return 0;
+                return parts.Length > 1 && int.TryParse(parts[1], out int n) ? n : 0;
             })
-            .ToList();
-
-             totalLevel = levelNumbers.Max();
-        }
-            return totalLevel;
-
+            .Max();
+#else
+        return 0;
+#endif
     }
+
     public static bool SaveToSO(Transform grid, int levelIndex)
-    {   
-        if(grid.GetComponentInChildren<Tile>() ==null) return false;
+    {
 #if UNITY_EDITOR
-        // Tạo asset mới
+        if (grid.GetComponentInChildren<Tile>() == null) return false;
+
         LevelDataSO asset = ScriptableObject.CreateInstance<LevelDataSO>();
         asset.tiles = new List<TileSaveData>();
 
@@ -54,12 +50,7 @@ public static class LevelDataManager
             if (tile == null) continue;
 
             Transform shadowTf = tile.transform.Find("Container/Shadow");
-            bool shadowActive = false;
-
-            if (shadowTf != null)
-            {
-                shadowActive = shadowTf.gameObject.activeSelf;
-            }
+            bool shadowActive = shadowTf != null && shadowTf.gameObject.activeSelf;
 
             asset.tiles.Add(new TileSaveData
             {
@@ -72,78 +63,129 @@ public static class LevelDataManager
             });
         }
 
+        if (!Directory.Exists(editorFolderPath))
+            Directory.CreateDirectory(editorFolderPath);
 
-        // Tạo folder nếu chưa có
-        if (!Directory.Exists(folderPath))
-            Directory.CreateDirectory(folderPath);
-
-        string path = $"{folderPath}/level_{levelIndex}.asset";
+        string path = $"{editorFolderPath}/level_{levelIndex}.asset";
 
         AssetDatabase.CreateAsset(asset, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log($"✅ Saved Level to: {path}");
+        Debug.Log($"✅ Saved Level (Editor): {path}");
         return true;
 #else
-        Debug.LogWarning("⚠ SaveToSO chỉ hoạt động trong Editor");
+        return false;
 #endif
     }
 
-    public static List<Tile> LoadFromSO(int levelIndex, GameObject tilePrefab, Transform gridParent)
+    public static List<Tile> LoadFromSOEditor(
+        int levelIndex,
+        GameObject tilePrefab,
+        Transform gridParent
+    )
     {
 #if UNITY_EDITOR
-        string filePath = $"{folderPath}/level_{levelIndex}.asset";
-
-        // Load SO
-        LevelDataSO data = AssetDatabase.LoadAssetAtPath<LevelDataSO>(filePath);
+        string path = $"{editorFolderPath}/level_{levelIndex}.asset";
+        LevelDataSO data = AssetDatabase.LoadAssetAtPath<LevelDataSO>(path);
 
         if (data == null)
         {
-            Debug.LogError($"❌ Không tìm thấy file: {filePath}");
+            Debug.LogError($"❌ Editor: Không tìm thấy {path}");
+            return null;
         }
 
-        // Clear tile cũ
-        foreach (Transform child in gridParent)
-            Object.DestroyImmediate(child.gameObject);
+        ClearGridImmediate(gridParent);
+        return SpawnTiles(data, tilePrefab, gridParent);
+#else
+        return null;
+#endif
+    }
 
-        List<Tile> loadedTiles = new List<Tile>();
+    // =======================
+    // RUNTIME (BUILD)
+    // =======================
+
+    public static List<Tile> LoadFromSORuntime(
+        int levelIndex,
+        GameObject tilePrefab,
+        Transform gridParent
+    )
+    {
+        string assetName = $"level_{levelIndex}";
+        LevelDataSO data =
+            Resources.Load<LevelDataSO>($"{runtimeResourcePath}/{assetName}");
+
+        if (data == null)
+        {
+            Debug.LogError($"❌ Runtime: Không tìm thấy level {assetName}");
+            return null;
+        }
+
+        ClearGrid(gridParent);
+        return SpawnTiles(data, tilePrefab, gridParent);
+    }
+
+    public static int GetTotalLevelRuntime()
+    {
+        LevelDataSO[] levels =
+            Resources.LoadAll<LevelDataSO>(runtimeResourcePath);
+        return levels.Length;
+    }
+
+    // =======================
+    // SHARED
+    // =======================
+
+    private static List<Tile> SpawnTiles(
+        LevelDataSO data,
+        GameObject tilePrefab,
+        Transform gridParent
+    )
+    {
+        List<Tile> tiles = new();
 
         foreach (var saveData in data.tiles)
         {
-            // Instantiate tile
-            GameObject tileObj = PrefabUtility.InstantiatePrefab(tilePrefab, gridParent) as GameObject;
+            GameObject tileObj =
+                Object.Instantiate(tilePrefab, gridParent);
+
             Tile tile = tileObj.GetComponent<Tile>();
+            if (tile == null) continue;
 
-            if (tile == null)
-            {
-                Debug.LogError("❌ Prefab không có component Tile");
-                continue;
-            }
-
-            // Gán dữ liệu
             tile.tileData = saveData.tile;
             tile.layer = saveData.layer;
             tile.isBlocked = saveData.isBlocked;
             tile.isClicked = saveData.clicked;
-
-            // Set vị trí thực
             tile.transform.position = saveData.worldPos;
 
-            // Set sprites từ tileData
+            var food = tile.transform.Find("Container/Food");
+            if (food != null)
+                food.GetComponent<SpriteRenderer>().sprite =
+                    saveData.tile.sprite;
 
-            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite =
-                saveData.tile.sprite;
-            tile.transform.Find("Container/Shadow").gameObject.SetActive(saveData.shadow);
-
-loadedTiles.Add(tile);
+            var shadow = tile.transform.Find("Container/Shadow");
+            if (shadow != null)
+                shadow.gameObject.SetActive(saveData.shadow);
+            tile.UpdateSortingOrder();
+            tiles.Add(tile);
+            
         }
-        Debug.Log($"✅ Loaded Level_{levelIndex}.asset thành công!");
-        return loadedTiles;
 
-#else
-        Debug.LogWarning("⚠ LoadFromSO chỉ hoạt động trong Editor!");
-        return null;
-#endif
+        return tiles;
     }
+
+    private static void ClearGrid(Transform grid)
+    {
+        foreach (Transform child in grid)
+            Object.Destroy(child.gameObject);
+    }
+
+#if UNITY_EDITOR
+    private static void ClearGridImmediate(Transform grid)
+    {
+        foreach (Transform child in grid)
+            Object.DestroyImmediate(child.gameObject);
+    }
+#endif
 }

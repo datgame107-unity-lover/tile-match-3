@@ -40,7 +40,6 @@ public class InfiniteModeHandler : IGameModeHandler
         dangerSystem = new DangerSystem(dangerUI);
         dangerSystem.OnDangerMax += OnDangerMaxed;
 
-        manager.SortTileAndActivateShadow();
         manager.StartCoroutine(DangerTickRoutine());
     }
 
@@ -51,14 +50,12 @@ public class InfiniteModeHandler : IGameModeHandler
             yield return new WaitForSeconds(spawnInterval);
 
             List<Tile> oldTiles = manager.transform.GetComponentsInChildren<Tile>().ToList();
-            foreach (Tile t in oldTiles)
-                t.AddLayer(1);
+         
 
             int spawnCount = Random.Range(15, 20);
-            List<Tile> newTiles = LevelManager.GenerateTiles(manager.transform, manager.tileDatas, spawnCount);
-            List<Tile> allTiles = oldTiles.Concat(newTiles).ToList();
-            dangerSystem.IncreaseBySpawn();
-            manager.SortTileAndActivateShadow(allTiles);
+            List<Tile> newTiles = LevelManager.GenerateTiles(manager.transform,manager.tilePrefab, manager.tileDatas, spawnCount);
+            manager.currentTiles = manager.currentTiles.Concat(newTiles).ToList();
+            dangerSystem.IncreaseBySpawn(); 
         }
     }
 
@@ -70,26 +67,31 @@ public class InfiniteModeHandler : IGameModeHandler
     public void OnTilesMatched(TileDataSO data, Tile tile)
     {
         comboCount++;
+
         float reduceAmount = 0.05f + comboCount * 0.02f;
         dangerSystem.Decrease(reduceAmount);
-        // reset timer
+
         if (comboTimerCor != null)
             manager.StopCoroutine(comboTimerCor);
+
         comboTimerCor = manager.StartCoroutine(ComboTimer());
 
-        bool isSameType = (lastMatchData == data);
+        lastMatchData ??= data;
+        bool isSameType = lastMatchData == data;
         lastMatchData = data;
+
+        // 🔔 BẮN EVENT COMBO
+        EventManager.OnComboChanged?.Invoke(comboCount, 1f);
+        EventManager.OnScoreAdd?.Invoke(comboCount);
         EventManager.OnTilesRemoved?.Invoke(data);
 
-        // --- RULE 1: nếu 3 cái cùng loại → clear hết loại đó ---
-        if ((comboCount == 2 && isSameType)||comboCount==7)
+        if ((comboCount == 2 && isSameType) || comboCount == 7)
         {
             ClearAllSameType(data);
             ResetCombo();
             return;
         }
 
-        // --- RULE 2: nếu 3 cái nhưng KHÁC loại → nổ AOE ---
         if (comboCount == 3 && !isSameType)
         {
             ExplodeAOE(tile);
@@ -97,11 +99,21 @@ public class InfiniteModeHandler : IGameModeHandler
         }
     }
 
+
     private IEnumerator ComboTimer()
     {
-        yield return new WaitForSeconds(comboMaxTime);
+        float timer = comboMaxTime;
+
+        while (timer > 0)
+        {
+            timer -= Time.deltaTime;
+            EventManager.OnComboChanged?.Invoke(comboCount, timer / comboMaxTime);
+            yield return null;
+        }
+
         ResetCombo();
     }
+
 
     private void ResetCombo()
     {
@@ -114,8 +126,9 @@ public class InfiniteModeHandler : IGameModeHandler
             comboTimerCor = null;
         }
 
-        Debug.Log("Combo Reset");
+        EventManager.OnComboReset?.Invoke();
     }
+
 
     private void ClearAllSameType(TileDataSO data)
     {
@@ -194,7 +207,9 @@ public class InfiniteModeHandler : IGameModeHandler
     }
 
     public void OnResetLevel()
-    {   
+    {
+        InfiniteScoreManager.Instance.ResetScore();
+
         manager.selectingTiles = new List<Tile>();
         foreach(Tile t in manager.transform.GetComponentsInChildren<Tile>())
         {
@@ -211,7 +226,7 @@ public class InfiniteModeHandler : IGameModeHandler
 
     public void OnPlayOn()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public void OnContinueLevel()

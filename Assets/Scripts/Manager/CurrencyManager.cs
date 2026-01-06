@@ -15,7 +15,7 @@ public class CurrencyManager : MonoBehaviour
 
     [Header("Heart Regen")]
     public int maxHeart = 5;
-    public float heartRegenTime = 10f; // 5 phút
+    public float heartRegenTime = 30f; // 5 phút
 
     private float heartTimer;
     private const string HEART_TIMER_KEY = "HeartTimer";
@@ -23,6 +23,11 @@ public class CurrencyManager : MonoBehaviour
 
     private Dictionary<CurrencyType, int> currencies = new Dictionary<CurrencyType, int>();
     private CurrencyType[] currencyTypes;
+
+    private Action shuffleAction;
+    private Action undoAction;
+    private Action hintAction;
+    private Action powerUpAction;
 
     private void Awake()
     {
@@ -46,13 +51,52 @@ public class CurrencyManager : MonoBehaviour
     {
         EventManager.OnPlayerWon += HandlePlayerWin;
         EventManager.OnPlayerLost += HandlePlayerLost;
+
+        shuffleAction = () => HandleAbilityUsed(CurrencyType.Shuffle);
+        undoAction = () => HandleAbilityUsed(CurrencyType.Undo);
+        hintAction = () => HandleAbilityUsed(CurrencyType.Hint);
+        powerUpAction = () => HandleAbilityUsed(CurrencyType.PowerUp);
+
+        EventManager.OnShuffleUsed += shuffleAction;
+        EventManager.OnUndoUsed += undoAction;
+        EventManager.OnHintUsed += hintAction;
+        EventManager.OnPowerUpUsed += powerUpAction;
     }
+
     private void OnDisable()
     {
         EventManager.OnPlayerWon -= HandlePlayerWin;
         EventManager.OnPlayerLost -= HandlePlayerLost;
+
+        EventManager.OnShuffleUsed -= shuffleAction;
+        EventManager.OnUndoUsed -= undoAction;
+        EventManager.OnHintUsed -= hintAction;
+        EventManager.OnPowerUpUsed -= powerUpAction;
     }
-    private void Update()
+
+        private void HandleAbilityUsed(CurrencyType type)
+    {
+        switch (type)
+        {
+            case CurrencyType.Shuffle:
+                Spend(CurrencyType.Shuffle,1);
+                break;
+            case CurrencyType.Undo:
+                Spend(CurrencyType.Undo,1);
+
+                break;
+            case CurrencyType.Hint:
+                Spend(CurrencyType.Hint, 1);
+
+                break;
+            case CurrencyType.PowerUp:
+                Spend(CurrencyType.PowerUp, 1);
+
+                break;
+        }
+    }
+
+private void Update()
     {
         if (currencies[CurrencyType.Heart] >= maxHeart) return;
 
@@ -90,9 +134,9 @@ public class CurrencyManager : MonoBehaviour
         {
             currencies[type] = PlayerPrefs.GetInt(type.ToString(), currencies[type]);
         }
-        currencies[CurrencyType.Heart] = 1;
         heartTimer = PlayerPrefs.GetFloat(HEART_TIMER_KEY, 0);
-        
+        currencies[CurrencyType.Heart] = 0;
+
     }
 
 

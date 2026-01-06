@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Another level down. Many more to go.
   target: 50
   rewards: []
+  disabled: 0

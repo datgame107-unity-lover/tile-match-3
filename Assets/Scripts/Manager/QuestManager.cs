@@ -11,10 +11,12 @@ public class QuestManager : MonoBehaviour
 
     [Header("Daily Quest Data")]
     public List<QuestDataSO> dailyQuestsData;
+    public List<QuestReward> dailyQuestRewards;
 
     [Header("Daily Win Config")]
     public int dailyWinTarget = 5;
     private int dailyWinCount = 0;
+    public List<QuestReward> dailyWinRewards;
 
     // Chest Claim Tracking
     private bool dailyQuestChestClaimed = false;
@@ -312,4 +314,14 @@ public class QuestManager : MonoBehaviour
     }
 
     public float GetDailyQuestProgress() => (float)GetClaimedQuestCount() / GetTotalDailyQuest();
+
+    public List<QuestReward> GetDailyQuestRewards()
+    {
+        return dailyQuestRewards;
+
+    }
+            public List<QuestReward> GetDailyWinRewards()
+    {
+        return dailyWinRewards;
+    }
 }

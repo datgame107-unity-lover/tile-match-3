@@ -44,7 +44,7 @@ public static class SortTiles
 
             // Tạo box trung tâm 85% của tile
             Vector2 center = tileCollider.bounds.center;
-            Vector2 size = tileCollider.bounds.size * 0.85f;
+            Vector2 size = tileCollider.bounds.size * 0.65f;
 
             // Kiểm tra overlap
             Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
@@ -68,5 +68,5 @@ public static class SortTiles
                 shadow.gameObject.SetActive(showShadow);
         }
     }
-
+   
 }

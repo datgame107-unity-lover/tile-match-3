@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
-public static class EventManager 
+public static class EventManager
 {
     public static Action<Tile> OnTileSelected;
     public static Action<TileDataSO> OnTilesRemoved;
@@ -33,5 +33,11 @@ public static class EventManager
     public static Action<ShopItemSO> OnBoughtItem;
     public static Action OnTransactionComplete;
     public static Action<QuestDataSO> OnQuestCompleted;
+    public static Action<int, float> OnComboChanged;
+    public static Action OnComboReset;
+    public static Action<int> OnScoreAdd;
+    public static Action<int> OnScoreChanged;
+    public static Action<int> OnHighScoreChanged;
+
 
 }

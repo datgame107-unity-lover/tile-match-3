@@ -33,7 +33,7 @@ public class LevelsScrollUI : MonoBehaviour
     {
         newLevelButton.onClick.AddListener(() =>
         {
-            CreateNewLevelButton(LevelDataManager.GetTotalLevel() + 1);
+            CreateNewLevelButton(LevelDataManager.GetTotalLevelEditor() + 1);
 
             newLevelButton.interactable = false;
         });
@@ -59,7 +59,7 @@ public class LevelsScrollUI : MonoBehaviour
  
     public void LoadLevel()
     {
-        for (int i = 1; i <= LevelDataManager.GetTotalLevel(); i++)
+        for (int i = 1; i <= LevelDataManager.GetTotalLevelEditor(); i++)
         {
             CreateNewLevelButton(i);
         }

@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Failure is part of learning.
   target: 50
   rewards: []
+  disabled: 0

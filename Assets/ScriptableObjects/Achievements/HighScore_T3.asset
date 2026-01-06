@@ -16,6 +16,7 @@ MonoBehaviour:
   id: HighScore_T3
   name: Score Legend
   icon: {fileID: -232123447, guid: 708c548507a67fa48ae0bc1edb3d7cd0, type: 3}
-  description: Higher numbers, bigger smiles.
+  description: Even the devs cant beat this
   target: 200
   rewards: []
+  disabled: 0

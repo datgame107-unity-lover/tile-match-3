@@ -42,6 +42,9 @@ public class AchievementData : ScriptableObject
     public List<QuestReward> rewards;
 
 
+    [Header("State")]
+    public bool disabled = false;
+
     private void OnValidate()
     {
         if(rewards.Count>2)

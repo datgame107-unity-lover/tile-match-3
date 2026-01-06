@@ -19,3 +19,4 @@ MonoBehaviour:
   description: You might need these someday.
   target: 200
   rewards: []
+  disabled: 1

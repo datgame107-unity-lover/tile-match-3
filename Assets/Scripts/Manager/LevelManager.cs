@@ -1,89 +1,162 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using TMPro;
-using UnityEditor;
-using UnityEditor.Overlays;
 using UnityEngine;
 
 public static class LevelManager
 {
-    public static List<Tile> GenerateTiles(Transform grid, List<TileDataSO> tileDatas, int spawnCount)
+    public static List<Tile> GenerateTiles(
+     Transform grid,
+     GameObject tilePrefab,
+     List<TileDataSO> tileDatas,
+     int spawnCount,
+     float gridWidth = 4f,
+     float gridHeight = 6f,
+     float padding = 0.1f)
     {
-        var tilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/TilePrefab.prefab");
-        if (tilePrefab == null)
-        {
-            Debug.LogError("Không tìm thấy TilePrefab!");
-            return new List<Tile>();
-        }
+        List<Tile> result = new();
+        if (tilePrefab == null || tileDatas == null || tileDatas.Count == 0)
+            return result;
 
-        List<Tile> createdTiles = new List<Tile>();
-        int maxAttempts = 50;
-        float gridWidth = 4f;
-        float gridHeight = 6f;
-        float padding = 0.1f; // khoảng cách tối thiểu giữa các tile
+        BoxCollider2D box = tilePrefab.GetComponent<BoxCollider2D>();
+        Vector2 tileSize = box != null
+            ? box.size + Vector2.one * padding
+            : Vector2.one;
 
-        BoxCollider2D prefabBox = tilePrefab.GetComponent<BoxCollider2D>();
-        Vector2 tileSize = prefabBox != null ? prefabBox.size + new Vector2(padding, padding) : new Vector2(1f, 1f);
+        List<Tile> tiles = grid.GetComponentsInChildren<Tile>().ToList();
+        const int MAX_ATTEMPTS = 50;
 
         for (int i = 0; i < spawnCount; i++)
         {
-            TileDataSO data = tileDatas[Random.Range(0, tileDatas.Count-4)];
-            Vector2 spawnPos = Vector2.zero;
-            bool positionFound = false;
+            TileDataSO data = tileDatas[UnityEngine.Random.Range(0, tileDatas.Count)];
+            int layer = GetRandomLayer(tiles);
 
-            // Tìm vị trí hợp lệ
-            for (int attempt = 0; attempt < maxAttempts; attempt++)
-            {
-                float xPos = Random.Range(-gridWidth / 2f + tileSize.x / 2f, gridWidth / 2f - tileSize.x / 2f);
-                float yPos = Random.Range(-gridHeight / 2f + tileSize.y / 2f, gridHeight / 2f - tileSize.y / 2f);
-                spawnPos = new Vector2(xPos, yPos);
-
-                // Check overlap với các tile đã spawn
-                bool overlap = false;
-                foreach (var t in createdTiles)
-                {
-                    Vector2 dist = (Vector2)t.worldPos -spawnPos;
-                    if (Mathf.Abs(dist.x) < tileSize.x && Mathf.Abs(dist.y) < tileSize.y)
-                    {
-                        overlap = true;
-                        break;
-                    }
-                }
-
-                if (!overlap)
-                {
-                    positionFound = true;
-                    break;
-                }
-            }
-
-            if (!positionFound)
-            {
+            if (!TryFindSpawnPosition(
+                tiles,
+                tileSize,
+                gridWidth,
+                gridHeight,
+                layer,
+                MAX_ATTEMPTS,
+                out Vector2 pos))
                 continue;
-            }
 
-            // Instantiate tile sau khi đã chọn vị trí hợp lệ
-            GameObject tileGO = GameObject.Instantiate(tilePrefab, grid);
-            tileGO.transform.position = new Vector3(spawnPos.x, spawnPos.y, 0);
-
-            Tile tile = tileGO.GetComponent<Tile>();
+            Tile tile = SpawnTile(grid, tilePrefab, data, pos);
             if (tile == null) continue;
 
-            tile.tileData = data;
-            tile.isBlocked = false;
-            tile.isClicked = false;
-            tile.layer = 0;
-            tile.transform.Find("Container/Food").GetComponent<SpriteRenderer>().sprite = data.sprite;
-            tile.worldPos = tile.transform.position;
+            tile.layer = layer;
+            tile.isBlocked = true;
+            tile.UpdateSortingOrder();
 
-            createdTiles.Add(tile);
+            result.Add(tile);
+            tiles.Add(tile);
         }
 
-        return createdTiles;
+        return result;
     }
 
 
+    // ================= SPAWN =================
+    private static Tile SpawnTile(
+        Transform grid,
+        GameObject prefab,
+        TileDataSO data,
+        Vector2 pos
+         )
+    {
+        GameObject go = Object.Instantiate(prefab, grid);
+        go.transform.position = pos;
 
+        Tile tile = go.GetComponent<Tile>();
+        if (tile == null) return null;
+
+        tile.tileData = data;
+        tile.isBlocked = false;
+        tile.isClicked = false;
+        tile.layer = 0;
+
+        tile.worldPos = pos;
+        tile.ApplyData();
+
+        return tile;
+    }
+
+    // ================= COLLISION =================
+    private static bool IsOverlapping(
+        Vector2 pos,
+        Vector2 size,
+        List<Tile> existing,
+        List<Tile> created)
+    {
+        foreach (var t in existing.Concat(created))
+        {
+            if (t == null) continue;
+
+            Vector2 dist = (Vector2)t.worldPos - pos;
+
+            if (Mathf.Abs(dist.x) < size.x &&
+                Mathf.Abs(dist.y) < size.y)
+                return true;
+        }
+        return false;
+    }
+    private static int GetRandomLayer(List<Tile> tiles)
+    {
+        if (tiles.Count == 0) return 0;
+
+        int maxLayer = tiles.Max(t => t.layer);
+        return UnityEngine.Random.Range(0, maxLayer + 2);
+    }
+    private static bool TryFindSpawnPosition(
+        List<Tile> tiles,
+        Vector2 tileSize,
+        float gridWidth,
+        float gridHeight,
+        int layer,
+        int maxAttempts,
+        out Vector2 position)
+    {
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            float x = UnityEngine.Random.Range(
+                -gridWidth * 0.5f + tileSize.x * 0.5f,
+                 gridWidth * 0.5f - tileSize.x * 0.5f);
+
+            float y = UnityEngine.Random.Range(
+                -gridHeight * 0.5f + tileSize.y * 0.5f,
+                 gridHeight * 0.5f - tileSize.y * 0.5f);
+
+            Vector2 pos = new(x, y);
+
+            if (!HasOverlapSameLayer(pos, tileSize, layer, tiles))
+            {
+                position = pos;
+                return true;
+            }
+        }
+
+        position = Vector2.zero;
+        return false;
+    }
+    private static bool HasOverlapSameLayer(
+        Vector2 pos,
+        Vector2 size,
+        int layer,
+        List<Tile> tiles)
+    {
+        Rect newRect = new(pos - size * 0.5f, size);
+
+        foreach (Tile tile in tiles)
+        {
+            Rect tileRect = new(
+                (Vector2)tile.transform.position - size * 0.5f,
+                size
+            );
+
+            if (newRect.Overlaps(tileRect) && tile.layer == layer)
+                return true;
+        }
+
+        return false;
+    }
 
 }

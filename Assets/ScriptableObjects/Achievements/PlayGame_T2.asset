@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Playing is easy. Stopping is hard.
   target: 50
   rewards: []
+  disabled: 0

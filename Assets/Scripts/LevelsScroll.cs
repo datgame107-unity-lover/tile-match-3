@@ -24,7 +24,7 @@ public class LevelsScroll : MonoBehaviour
     private void ChoseLevelHandler(int level)
     {
         ClearGrid(grid);
-        if (LevelDataManager.GetTotalLevel() < level)
+        if (LevelDataManager.GetTotalLevelEditor() < level)
         {
             return;
         }
@@ -38,7 +38,7 @@ public class LevelsScroll : MonoBehaviour
 
     private void LoadLevel(int level)
     {
-        LevelDataManager.LoadFromSO(level, tilePrefab, grid);
+        LevelDataManager.LoadFromSOEditor(level, tilePrefab, grid);
     }
     private List<Tile> GetTile(Transform grid)
     {

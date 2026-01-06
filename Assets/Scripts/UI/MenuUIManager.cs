@@ -19,6 +19,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     public Button settingButton;
     public Button shopButton;
     public Button levelCreatorButton;
+    public Button AdsRewardButton;
 
     [Header("UI Panels")]
     public GameObject settingUI;
@@ -28,11 +29,20 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
     [Header("State")]
     [SerializeField]
     private int currentIndex = 1;
-
+    private bool rewardVisible;
+    private Tween rewardTween;
+    private Tween availableLoopTween;
+    private AdsController adsController;
     private void Start()
     {
-        SnapToPage(currentIndex, true); 
-        scrollRect.vertical = false;   
+        adsController = new AdsController(AdsManager.Instance.settings);
+
+        TextMeshProUGUI buttonText = changeModeButton.GetComponentInChildren<TextMeshProUGUI>();
+
+        buttonText.text = GameManager.instance.gameMode.ToString();
+
+        SnapToPage(currentIndex, true);
+        scrollRect.vertical = false;
 
         playButton.onClick.AddListener(() =>
         {
@@ -42,7 +52,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
                 return;
             }
             SceneLoader.TargetScene = SceneEnum.GameScene;
-            SceneManager.LoadScene(SceneEnum.Loading.ToString(),LoadSceneMode.Single);
+            SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
         });
         changeModeButton.onClick.AddListener(() =>
         {
@@ -58,12 +68,96 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         {
             shopUI.SetActive(!shopUI.activeSelf);
         });
+#if UNITY_EDITOR
         levelCreatorButton.onClick.AddListener(() =>
         {
             SceneLoader.TargetScene = SceneEnum.LevelCreator; // đặt scene muốn load
             SceneManager.LoadScene(SceneEnum.Loading.ToString(), LoadSceneMode.Single);
         });
+
+
+        AdsRewardButton.onClick.AddListener(() =>
+        {
+            if (!adsController.CanClickRewardedButton())
+                return;
+
+            AdsManager.Instance.ShowRewarded(() =>
+            {
+                CurrencyManager.Instance.Add(CurrencyType.Flower, 20);
+            });
+        });
+
+
+#endif
     }
+
+    private void Update()
+    {
+        bool canShow = adsController.CanClickRewardedButton();
+
+        if (canShow != rewardVisible)
+        {
+            rewardVisible = canShow;
+            AnimateRewardButton(canShow);
+        }
+    }
+    private void AnimateRewardButton(bool show)
+    {
+        rewardTween?.Kill();
+        availableLoopTween?.Kill();
+
+        RectTransform rt = AdsRewardButton.GetComponent<RectTransform>();
+        CanvasGroup cg = AdsRewardButton.GetComponent<CanvasGroup>();
+
+        if (cg == null)
+            cg = AdsRewardButton.gameObject.AddComponent<CanvasGroup>();
+
+        AdsRewardButton.interactable = show;
+
+        if (show)
+        {
+            AdsRewardButton.gameObject.SetActive(true);
+
+            rt.localScale = Vector3.zero;
+            cg.alpha = 0f;
+
+            rewardTween = DOTween.Sequence()
+                .Append(rt.DOScale(1f, 0.35f).SetEase(Ease.OutBack))
+                .Join(cg.DOFade(1f, 0.25f))
+                .OnComplete(() =>
+                {
+                    StartAvailableEffect(rt);
+                });
+        }
+        else
+        {
+            rewardTween = DOTween.Sequence()
+                .Append(rt.DOScale(0.85f, 0.2f))
+                .Join(cg.DOFade(0f, 0.2f))
+                .OnComplete(() =>
+                {
+                    AdsRewardButton.interactable = false;
+                });
+        }
+    }
+    private void StartAvailableEffect(RectTransform rt)
+    {
+        availableLoopTween?.Kill();
+
+        rt.localRotation = Quaternion.Euler(0, 0, 40);
+
+        availableLoopTween = rt
+            .DOLocalRotate(
+                new Vector3(0, 0, -40),
+                1.2f,
+                RotateMode.LocalAxisAdd)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
+
+
+    }
+
+
     private void ChangeMode()
     {
         GameMode currentMode = GameManager.instance.gameMode;
@@ -88,7 +182,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         targetIndex = Mathf.Clamp(targetIndex, 0, menuCount - 1);
 
         SnapToPage(targetIndex);
-        
+
     }
 
     private void SnapToPage(int index, bool immediate = false)
@@ -111,7 +205,7 @@ public class MenuUIManager : MonoBehaviour, IBeginDragHandler, IEndDragHandler
         }
     }
     public void GoToPage(int pageIndex)
-    {   
+    {
 
         pageIndex = Mathf.Clamp(pageIndex, 0, menuCount - 1);
         SnapToPage(pageIndex);

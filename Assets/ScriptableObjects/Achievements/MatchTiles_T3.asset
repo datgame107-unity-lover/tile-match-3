@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Tiles obey your commands.
   target: 200
   rewards: []
+  disabled: 0

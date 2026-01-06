@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEngine;
 
@@ -100,3 +101,5 @@ public class ShopItemSOEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 }
+
+#endif

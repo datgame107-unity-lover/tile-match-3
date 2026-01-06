@@ -23,7 +23,8 @@ public class TileManager : MonoBehaviour
 
     private IGameModeHandler modeHandler;
 
-    private Tile currentHoveredTile;
+    private Tile pressedTile;
+    private bool isHoldingMouse;
 
     private Stack<Tile> undoStack = new Stack<Tile>();
 
@@ -50,9 +51,13 @@ public class TileManager : MonoBehaviour
         
         GameManager.instance.ChangeState(GameState.Playing);
         currentTiles = transform.GetComponentsInChildren<Tile>().ToList();
-        SortTileAndActivateShadow(currentTiles);
     }
 
+    private void LateUpdate()
+    {
+        SortTileAndActivateShadow(currentTiles);
+
+    }
     private void OnEnable()
     {
         EventManager.OnRestartLevel += RestartLevelHandler; 
@@ -75,7 +80,7 @@ public class TileManager : MonoBehaviour
                 selectingTiles[i].gameObject.SetActive(true);
                 selectingTiles[i].isClicked = false;
                 selectingTiles[i].transform.Find("Container").localScale = Vector3.zero;
-                selectingTiles[i].transform.Find("Container").DOScale(selectingTiles[i].originalScale, 0.5f).SetEase(Ease.OutBack);
+                selectingTiles[i].transform.Find("Container").DOScale(selectingTiles[i].GetOriginalScale(), 0.5f).SetEase(Ease.OutBack);
                 selectingTiles.Remove(selectingTiles[i]);
                 EventManager.OnPlayOn?.Invoke();
             }
@@ -89,40 +94,65 @@ public class TileManager : MonoBehaviour
         if (GameManager.instance.currentState != GameState.Playing) return;
 
         Tile tileUnderMouse = GetTopTileUnderMouse();
-        if (tileUnderMouse==null|| tileUnderMouse.isBlocked) return;
-        if (Input.GetMouseButton(0))
+
+        // ===== MOUSE DOWN =====
+        if (Input.GetMouseButtonDown(0))
         {
-            if (tileUnderMouse != currentHoveredTile)
+            if (tileUnderMouse != null && !tileUnderMouse.isBlocked)
             {
-                if (currentHoveredTile != null)
-                {
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"),tileUnderMouse.originalScale,1.2f, 0.3f);
-                }
+                pressedTile = tileUnderMouse;
 
-                currentHoveredTile = tileUnderMouse;
+                Transform c = pressedTile.transform.Find("Container");
+                c.DOKill();
 
-                if (currentHoveredTile != null && !currentHoveredTile.isBlocked)
-                {
-                    DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), tileUnderMouse.originalScale, 1.2f, 0.3f);
-                }
-            }
-
-            if (tileUnderMouse == null && currentHoveredTile != null)
-            {
-                DOAnimationManager.ScaleBounce(currentHoveredTile.transform.Find("Container"), tileUnderMouse.originalScale, 1.2f, 0.3f);
-                currentHoveredTile = null;
+                DOAnimationManager.ScaleBounce(
+                    c,
+                    pressedTile.GetOriginalScale(),
+                    1.2f,
+                    0.2f,
+                    false
+                );
             }
         }
 
+        // ===== MOUSE UP =====
         if (Input.GetMouseButtonUp(0))
         {
-            if (currentHoveredTile != null && !currentHoveredTile.isBlocked&&!currentHoveredTile.isClicked)
+            if (pressedTile != null)
             {
-                SelectTile(currentHoveredTile);
-                currentHoveredTile = null;
+                bool releasedOnSameTile = tileUnderMouse == pressedTile;
+
+                Transform c = pressedTile.transform.Find("Container");
+                c.DOKill();
+
+                if (releasedOnSameTile)
+                {
+                    // CONFIRM SELECT → GIỮ SCALE
+                    if (!pressedTile.isBlocked && !pressedTile.isClicked)
+                    {
+                        SelectTile(pressedTile);
+                    }
+                    // không scale về 1f
+                }
+                else
+                {
+                    // CANCEL → TRẢ VỀ SCALE BAN ĐẦU
+                    DOAnimationManager.ScaleBounce(
+                        c,
+                        pressedTile.GetOriginalScale(),
+                        1f,
+                        0.2f
+                    );
+                }
+
+                pressedTile = null;
             }
         }
     }
+
+
+
+
 
     #region --- Game Setup / Mode ---
     private void RestartLevelHandler()
@@ -194,13 +224,7 @@ public class TileManager : MonoBehaviour
             return;
         }
 
-        if (isDiscarding)
-        {
-            TryDiscard(tile);
-            modeHandler?.OnWinCheck(currentTiles, selectingTiles);
-            return;
-        }
-        SortTileAndActivateShadow();
+     
         modeHandler?.OnTileSelected(tile);
     }
 
@@ -234,7 +258,6 @@ public class TileManager : MonoBehaviour
                 break;
             }
         }
-        SortTileAndActivateShadow();
         EventManager.OnTileSelected?.Invoke(tile);
 
         CheckMatch3Condition(tile.tileData);
@@ -340,31 +363,11 @@ public class TileManager : MonoBehaviour
 
         modeHandler?.OnTilesMatched(tile.tileData,tile);
 
-        Debug.Log("[TileManager] PowerUp used - removed 3 tiles of type: " + tile.tileData.name);
+        EventManager.OnPowerUpUsed?.Invoke();
+
     }
 
 
-    public void Discard()
-    {
-        isDiscarding = true;
-        isUsingPowerUp = false;
-        Debug.Log("[TileManager] Discard activated - click a tile to remove it");
-    }
-
-    private void TryDiscard(Tile tile)
-    {
-        if (!isDiscarding) return;
-        isDiscarding = false;
-
-        if (tile == null) return;
-
-        currentTiles.Remove(tile);
-
-        if (tile.gameObject != null)
-            Destroy(tile.gameObject);
-
-        Debug.Log("[TileManager] Discard used - removed 1 tile");
-    }
 
     #endregion
 
@@ -373,7 +376,7 @@ public class TileManager : MonoBehaviour
 
     public void Shuffle()
     {
-        if (currentTiles == null || currentTiles.Count <= 1) return;
+        if (currentTiles == null || currentTiles.Count <= 3) return;
 
         List<TileDataSO> dataList = currentTiles
             .Select(t => t.tileData)
@@ -394,6 +397,8 @@ public class TileManager : MonoBehaviour
                 tile.ApplyData();
             }
         }
+        EventManager.OnShuffleUsed?.Invoke();
+        SortTileAndActivateShadow(currentTiles);
     }
     public void RefreshBoard()
     {
@@ -447,10 +452,12 @@ public class TileManager : MonoBehaviour
         foreach (var tile in hintTiles)
         {   
             if (tile == null) continue;
-            DOAnimationManager.ScaleBounce(tile.transform.Find("Container"),tile.originalScale, 1.3f, 0.1f);
+            DOAnimationManager.ScaleBounce(tile.transform.Find("Container"),tile.GetOriginalScale(), 1.3f, 0.1f);
         }
 
         Debug.Log("[TileManager] Hint shown");
+        EventManager.OnHintUsed?.Invoke();
+
     }
 
     public void Undo()
@@ -473,39 +480,23 @@ public class TileManager : MonoBehaviour
             if (!currentTiles.Contains(last))
                 currentTiles.Add(last);
             EventManager.OnTileRemoved?.Invoke(last.tileData);
-  
+             EventManager.OnUndoUsed?.Invoke();
 
-            Debug.Log("[TileManager] Undo: restored last selected tile");
+
             return;
         }
 
-        Debug.Log("[TileManager] Undo: nothing to restore");
     }
 
     #endregion
 
     #region --- Helpers / UI bindings ---
 
-    public void OnShuffleButton() => Shuffle();
-    public void OnUndoButton() => Undo();
-    public void OnHintButton() => Hint();
-    public void OnPowerUpButton() => PowerUp();
 
   
-    public void SortTileAndActivateShadow()
-    {
-        SortTiles.Sort(currentTiles);
-        SortTiles.ActivateShadows(currentTiles);
-    }
+  
     public void SortTileAndActivateShadow(List<Tile> tiles)
     {   
-        if (tiles == null || tiles.Count == 0) return;
-
-        foreach (var t in tiles)
-        {
-            if (t == null) continue;
-            if (!tiles.Contains(t)) tiles.Add(t);
-        }
 
          SortTiles.Sort(tiles);
         SortTiles.ActivateShadows(tiles);

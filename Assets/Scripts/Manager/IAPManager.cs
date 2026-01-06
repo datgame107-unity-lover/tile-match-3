@@ -50,10 +50,16 @@ public class IAPManager : MonoBehaviour
         storeController.OnPurchaseConfirmed += StoreController_OnPurchaseConfirmed;
         storeController.OnPurchaseFailed += StoreController_OnPurchaseFailed;
         storeController.OnPurchaseDeferred += StoreController_OnPurchaseDeferred;
+        storeController.OnStoreDisconnected += StoreController_OnStoreDisconnected1;
 
         await storeController.Connect();
         var initialProductToFetch = BuildProductDefinition();
         storeController.FetchProducts(initialProductToFetch);
+    }
+
+    private void StoreController_OnStoreDisconnected1(StoreConnectionFailureDescription obj)
+    {
+        Debug.Log("Connection failed");
     }
 
     private void StoreController_OnPurchaseDeferred(DeferredOrder obj)

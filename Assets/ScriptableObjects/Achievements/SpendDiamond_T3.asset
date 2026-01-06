@@ -19,3 +19,4 @@ MonoBehaviour:
   description: Worth every diamond. Probably.
   target: 200
   rewards: []
+  disabled: 0

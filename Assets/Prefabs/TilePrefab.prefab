@@ -34,6 +34,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8822050853626152598
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -79,6 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: -589213227
   m_SortingLayer: 2
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 5609186417426296706, guid: 31566a7de8561a8498006fbc8fb86218, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -88,7 +90,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &3822731737702487939
 GameObject:
@@ -99,10 +100,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 776212561200744091}
-  - component: {fileID: 7049140844678489526}
   - component: {fileID: 872788587661327137}
   - component: {fileID: 9007432158399597083}
-  - component: {fileID: 1994020900718566338}
+  - component: {fileID: 3683613540317335192}
   m_Layer: 0
   m_Name: TilePrefab
   m_TagString: Untagged
@@ -126,24 +126,6 @@ Transform:
   - {fileID: 7451139826177702389}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7049140844678489526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3822731737702487939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed87ddac954574d409ff9099c2e35ca3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Tile
-  tileData: {fileID: 0}
-  worldPos: {x: 0, y: 0, z: 0}
-  layer: 0
-  isBlocked: 0
-  isClicked: 0
-  ui: {fileID: 0}
 --- !u!50 &872788587661327137
 Rigidbody2D:
   serializedVersion: 5
@@ -217,7 +199,7 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.78, y: 0.79}
   m_EdgeRadius: 0
---- !u!114 &1994020900718566338
+--- !u!114 &3683613540317335192
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -226,14 +208,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3822731737702487939}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e6f20517582c4ab47b56347a9a8a0299, type: 3}
+  m_Script: {fileID: 11500000, guid: ec65324cc88b54043ad9000f8d00978b, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TileUI
-  food: {fileID: 549304976545514282}
-  shadow: {fileID: 1582997151107130844}
-  outline: {fileID: 0}
-  shadowAlpha: 0.25
-  shadowOffsetY: -5
+  m_EditorClassIdentifier: Assembly-CSharp::Tile
+  tileData: {fileID: 0}
+  layer: 0
+  isBlocked: 0
+  isClicked: 0
+  worldPos: {x: 0, y: 0}
 --- !u!1 &3884832695615283001
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,6 +250,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &549304976545514282
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -313,6 +296,7 @@ SpriteRenderer:
   m_SortingLayerID: -589213227
   m_SortingLayer: 2
   m_SortingOrder: 2
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 797137038, guid: 22ea41d9853db144b9072aaefd162bfb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -322,7 +306,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!1 &6720790666405358515
 GameObject:
@@ -408,6 +391,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &1582997151107130844
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -453,6 +437,7 @@ SpriteRenderer:
   m_SortingLayerID: -589213227
   m_SortingLayer: 2
   m_SortingOrder: 3
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 5609186417426296706, guid: 31566a7de8561a8498006fbc8fb86218, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.8784314}
   m_FlipX: 0
@@ -462,5 +447,4 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0

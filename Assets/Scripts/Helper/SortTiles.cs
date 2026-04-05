@@ -1,72 +1,59 @@
-﻿using System.Collections.Generic;
+﻿// Scripts/Helper/SortTiles.cs
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public static class SortTiles 
+public static class SortTiles
 {
     public static void Sort(List<Tile> tiles)
     {
-        if (tiles == null) return;
+        if (tiles == null || tiles.Count == 0) return;
 
-        foreach (Tile tile in tiles)
+        // Group theo vị trí (snap về grid 0.1f)
+        var groups = tiles.GroupBy(t =>
         {
-            if (tile == null) continue;
+            var p = t.transform.position;
+            return new Vector2(
+                Mathf.Round(p.x * 10f) / 10f,
+                Mathf.Round(p.y * 10f) / 10f);
+        });
 
-            int baseOrder = tile.layer * 10;
-
-            var container = tile.transform.Find("Container");
-            if (container == null) continue;
-
-            foreach (var renderer in container.GetComponentsInChildren<SpriteRenderer>())
+        foreach (var group in groups)
+        {
+            var stack = group.OrderBy(t => t.layer).ToList();
+            for (int i = 0; i < stack.Count; i++)
             {
-                if (renderer == null) continue;
-
-                if (renderer.name == "Shadow")
-                    renderer.sortingOrder = baseOrder + 2;
-                else if (renderer.name == "Base")
-                    renderer.sortingOrder = baseOrder;
-                else if (renderer.name == "Food")
-                    renderer.sortingOrder = baseOrder + 1;
-                else
-                    renderer.sortingOrder = baseOrder;
+                stack[i].layer = i;
+                stack[i].UpdateSortingOrder();
             }
         }
     }
 
     public static void ActivateShadows(List<Tile> tiles)
-    {   
+    {
         if (tiles == null) return;
-        foreach (Tile tile in tiles)
-        {
-            if (tile == null) continue;
 
-            Collider2D tileCollider = tile.GetComponent<Collider2D>();
-            if (tileCollider == null) continue;
-
-            // Tạo box trung tâm 85% của tile
-            Vector2 center = tileCollider.bounds.center;
-            Vector2 size = tileCollider.bounds.size * 0.65f;
-
-            // Kiểm tra overlap
-            Collider2D[] hits = Physics2D.OverlapBoxAll(center, size, 0f);
-            bool showShadow = false;
-
-            foreach (var hit in hits)
+        // Tile bị chặn = có tile khác cùng vị trí với layer cao hơn
+        var positions = tiles
+            .GroupBy(t =>
             {
-                if (hit == null) continue;
-                Tile otherTile = hit.GetComponent<Tile>();
-                if (otherTile != null && otherTile.layer > tile.layer)
-                {
-                    showShadow = true;
-                    break;
-                }
-            }
+                var p = t.transform.position;
+                return new Vector2(
+                    Mathf.Round(p.x * 10f) / 10f,
+                    Mathf.Round(p.y * 10f) / 10f);
+            })
+            .Where(g => g.Count() > 1);
 
-            tile.isBlocked = showShadow;
+        // Reset tất cả
+        foreach (var tile in tiles)
+            tile.SetBlocked(false);
 
-            var shadow = tile.transform.Find("Container/Shadow");
-            if (shadow != null)
-                shadow.gameObject.SetActive(showShadow);
+        // Đánh dấu blocked
+        foreach (var group in positions)
+        {
+            var stack = group.OrderBy(t => t.layer).ToList();
+            for (int i = 0; i < stack.Count - 1; i++)
+                stack[i].SetBlocked(true);
         }
     }
-   
 }

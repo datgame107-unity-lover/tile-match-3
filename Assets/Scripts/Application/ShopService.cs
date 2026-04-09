@@ -26,6 +26,7 @@ public class ShopService
     // ── IAP ───────────────────────────────────────────
     public void GrantIAP(string productId)
     {
+        Debug.Log("Ok");
         if (string.IsNullOrEmpty(productId))
         {
             Debug.LogError("[ShopService] productId is null or empty");

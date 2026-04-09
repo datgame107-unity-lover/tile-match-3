@@ -32,7 +32,7 @@ public struct ScoreAddedEvent { public int amount; }
 public struct ScoreChangedEvent { public int total; }
 public struct HighScoreChangedEvent { public int score; }
 public struct DangerChangedEvent { public float value; }
-
+public struct EndlessModeStartedEvent { }
 // ?? Currency ???????????????????????????????????????
 public struct CurrencyChangedEvent { public CurrencyType type; public int amount; }
 public struct CurrencySpentEvent { public CurrencyType type; public int amount; }

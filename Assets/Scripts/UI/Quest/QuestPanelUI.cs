@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening; // BẮT BUỘC: Thêm thư viện DOTween
 
 public class QuestPanelUI : MonoBehaviour
 {
@@ -51,7 +52,7 @@ public class QuestPanelUI : MonoBehaviour
 
     // ── Build list ───────────────────────────────────────
     private void BuildQuestList()
-    {   
+    {
         foreach (Transform t in questListContainer)
             Destroy(t.gameObject);
         _questItems.Clear();
@@ -66,7 +67,7 @@ public class QuestPanelUI : MonoBehaviour
     }
 
     // ── Refresh ──────────────────────────────────────────
-    private void Refresh()
+    public void Refresh()
     {
         if (_progress == null) return;
         RefreshDailyWin();
@@ -78,19 +79,25 @@ public class QuestPanelUI : MonoBehaviour
     private void RefreshDailyWin()
     {
         int count = _progress.GetDailyWinCount();
-        int target = 5; // dailyWinTarget
+        int target = 5; // dailyWinTarget (Có thể lấy từ ProgressService nếu bạn đã expose)
         float pct = _progress.GetDailyWinProgress();
         bool ready = _progress.IsDailyWinReady();
         bool claimed = _progress.IsDailyWinChestClaimed();
 
         if (dailyWinFill != null)
-            dailyWinFill.fillAmount = pct;
+        {
+            // Hiệu ứng thanh fill chạy mượt mà
+            dailyWinFill.DOFillAmount(pct, 0.4f).SetEase(Ease.OutCubic);
+        }
 
         if (dailyWinText != null)
             dailyWinText.text = $"{count}/{target}";
 
         if (dailyWinClaimButton != null)
+        {
+            // Nếu đủ điều kiện và chưa nhận -> Mở nút. Đã nhận hoặc chưa đủ -> Khóa nút.
             dailyWinClaimButton.interactable = ready && !claimed;
+        }
     }
 
     private void RefreshQuestChest()
@@ -102,35 +109,85 @@ public class QuestPanelUI : MonoBehaviour
         bool claimed = _progress.IsDailyQuestChestClaimed();
 
         if (questChestFill != null)
-            questChestFill.fillAmount = pct;
+        {
+            questChestFill.DOFillAmount(pct, 0.4f).SetEase(Ease.OutCubic);
+        }
 
         if (questChestText != null)
             questChestText.text = $"{done}/{total}";
 
         if (questChestClaimButton != null)
+        {
             questChestClaimButton.interactable = ready && !claimed;
+        }
     }
 
     private void RefreshCurrency()
     {
         if (_currency == null) return;
+
+        // Cập nhật Flower với hiệu ứng scale nảy lên
         if (flowerText != null)
-            flowerText.text = _currency.Get(CurrencyType.Flower).ToString();
+        {
+            string newFlowerText = _currency.Get(CurrencyType.Flower).ToString();
+            if (flowerText.text != newFlowerText && !string.IsNullOrEmpty(flowerText.text))
+            {
+                flowerText.text = newFlowerText;
+                flowerText.transform.DOKill(true); // Hủy anim cũ nếu đang chạy
+                flowerText.transform.DOPunchScale(Vector3.one * 0.3f, 0.3f, 5, 1f);
+            }
+            else
+            {
+                flowerText.text = newFlowerText; // Lần đầu bật UI
+            }
+        }
+
+        // Cập nhật Diamond với hiệu ứng scale nảy lên
         if (diamondText != null)
-            diamondText.text = _currency.Get(CurrencyType.Diamond).ToString();
+        {
+            string newDiamondText = _currency.Get(CurrencyType.Diamond).ToString();
+            if (diamondText.text != newDiamondText && !string.IsNullOrEmpty(diamondText.text))
+            {
+                diamondText.text = newDiamondText;
+                diamondText.transform.DOKill(true);
+                diamondText.transform.DOPunchScale(Vector3.one * 0.3f, 0.3f, 5, 1f);
+            }
+            else
+            {
+                diamondText.text = newDiamondText;
+            }
+        }
     }
 
     // ── Claim ────────────────────────────────────────────
     private void OnClaimDailyWin()
     {
-        _progress.ClaimDailyWinChest();
-        Refresh();
+        // Khóa nút ngay lập tức để tránh bấm đúp
+        dailyWinClaimButton.interactable = false;
+
+        // [TODO: Thêm AudioSource.PlayOneShot(buttonClickClip)]
+
+        // Hiệu ứng nảy nút
+        dailyWinClaimButton.transform.DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1)
+            .OnComplete(() =>
+            {
+                // [TODO: Chạy Particle System rương mở tung hoặc VFX tiền bay ra ở đây]
+
+                _progress.ClaimDailyWinChest(); // Gọi logic xử lý
+                Refresh(); // Cập nhật lại UI (Tiền sẽ tự động nảy lên nhờ hàm RefreshCurrency)
+            });
     }
 
     private void OnClaimQuestChest()
     {
-        _progress.ClaimDailyQuestChest();
-        Refresh();
+        questChestClaimButton.interactable = false;
+
+        questChestClaimButton.transform.DOPunchScale(Vector3.one * 0.1f, 0.2f, 10, 1)
+            .OnComplete(() =>
+            {
+                _progress.ClaimDailyQuestChest();
+                Refresh();
+            });
     }
 
     // ── Events ───────────────────────────────────────────
@@ -153,5 +210,7 @@ public class QuestPanelUI : MonoBehaviour
     private void OnQuestCompleted(QuestCompletedEvent _) => Refresh();
     private void OnQuestClaimed(QuestClaimedEvent _) => Refresh();
     private void OnPlayerWon(PlayerWonEvent _) => RefreshDailyWin();
+
+    // Khi tiền tệ thay đổi, chỉ cần cập nhật phần hiển thị tiền
     private void OnCurrencyChanged(CurrencyChangedEvent _) => RefreshCurrency();
 }

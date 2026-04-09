@@ -15,64 +15,93 @@ public class LevelBuilder
 
     // ── Build random (Endless mode) ───────────────────
     public List<Tile> BuildRandom(
-        Transform parent,
-        GameObject prefab,
-        TileDatabaseSO db,
-        int count,
-        GridConfig grid)
+         Transform parent,
+         GameObject prefab,
+         TileDatabaseSO db,
+         int count,
+         GridConfig grid,
+         List<Tile> existingTiles)
     {
         var result = new List<Tile>();
         var available = new List<Vector2>(grid.GetAllPositions());
 
-        count = (count / 3) * 3;
-
         Shuffle(available);
-        int spawnCount = Mathf.Min(count, available.Count);
+
+        int maxAvailable = available.Count;
+        int spawnCount = Mathf.Min(count, maxAvailable);
+        spawnCount = (spawnCount / 3) * 3;
+
+        if (spawnCount <= 0) return result;
 
         var tileDatas = PickRandomInTriples(db.tiles, spawnCount);
 
+        // Tạo độ lệch ngẫu nhiên tối đa bằng kích thước collider
+        float jitterOffset = grid.colliderSize * 0.25f;
+
         for (int i = 0; i < spawnCount; i++)
         {
-            // tính layer dựa vào tile đã spawn (giống BoardController.CalcLayer)
-            int layer = CalcLayer(available[i], result, grid.colliderSize);
+            Vector2 randomOffset = new Vector2(
+                Random.Range(-jitterOffset, jitterOffset),
+                Random.Range(-jitterOffset, jitterOffset)
+            );
+
+            Vector2 spawnPos = available[i] + randomOffset;
+
+            int layer = CalcLayer(spawnPos, existingTiles, result, grid.colliderSize);
 
             var tile = TileSpawner.Spawn(
                 parent,
                 prefab,
                 tileDatas[i],
-                available[i],
+                spawnPos,
                 layer);
+
+            // (Tùy chọn) Xoay gạch một chút xíu cho giống một đống lộn xộn tự nhiên
+            // tile.transform.rotation = Quaternion.Euler(0, 0, Random.Range(-15f, 15f));
 
             result.Add(tile);
         }
 
-        // refresh blocking + shadow cho toàn bộ tile vừa spawn
-        RefreshAllBlocking(result, grid.colliderSize);
+        var allTilesOnBoard = new List<Tile>(existingTiles);
+        allTilesOnBoard.AddRange(result);
+        RefreshAllBlocking(allTilesOnBoard, grid.colliderSize);
 
         return result;
     }
 
     // ── Blocking ─────────────────────────────────────
 
-    private int CalcLayer(Vector2 pos, List<Tile> existing, float colliderSize)
+    private int CalcLayer(Vector2 pos, List<Tile> existing, List<Tile> newlySpawned, float colliderSize)
     {
         int max = 0;
+
         foreach (var tile in existing)
         {
-            if (IsOverlapping(pos, tile.transform.position, colliderSize))
+            if (tile != null && IsOverlapping(pos, tile.transform.position, colliderSize))
                 max = Mathf.Max(max, tile.layer + 1);
         }
+
+        foreach (var tile in newlySpawned)
+        {
+            if (tile != null && IsOverlapping(pos, tile.transform.position, colliderSize))
+                max = Mathf.Max(max, tile.layer + 1);
+        }
+
         return max;
     }
 
-    private void RefreshAllBlocking(List<Tile> tiles, float colliderSize)
+    // CHUYỂN HÀM NÀY THÀNH PUBLIC để hệ thống khác có thể gọi lại khi nhặt gạch
+    public void RefreshAllBlocking(List<Tile> tiles, float colliderSize)
     {
         foreach (var tile in tiles)
         {
+            if (tile == null) continue;
+
             bool blocked = false;
             foreach (var other in tiles)
             {
-                if (other == tile) continue;
+                if (other == null || other == tile) continue;
+
                 if (other.layer > tile.layer &&
                     IsOverlapping(tile.transform.position, other.transform.position, colliderSize))
                 {
@@ -85,11 +114,10 @@ public class LevelBuilder
     }
 
     private bool IsOverlapping(Vector2 a, Vector2 b, float colliderSize) =>
-        Mathf.Abs(a.x - b.x) < colliderSize &&
-        Mathf.Abs(a.y - b.y) < colliderSize;
+         Mathf.Abs(a.x - b.x) < colliderSize &&
+         Mathf.Abs(a.y - b.y) < colliderSize;
 
     // ── Helpers ───────────────────────────────────────
-
     private List<TileDataSO> PickRandomInTriples(List<TileDataSO> source, int count)
     {
         var result = new List<TileDataSO>();

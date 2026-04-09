@@ -44,7 +44,7 @@ public class EndlessModeHandler : IGameModeHandler
 
         dangerSystem = new DangerSystem();
         dangerSystem.OnDangerMax += OnDangerMaxed;
-
+        EventBus<EndlessModeStartedEvent>.Publish(new EndlessModeStartedEvent());
         if (!isSpawning)
         {
             isSpawning = true;
@@ -143,12 +143,12 @@ public class EndlessModeHandler : IGameModeHandler
             int spawnCount = Random.Range(15, 20);
 
             var newTiles = builder.BuildRandom(
-                context.Root,
-                context.TilePrefab,
-                db,
-                spawnCount,
-                gridConfig);
-
+                  context.Root,
+                  context.TilePrefab,
+                  db,
+                  spawnCount,
+                  gridConfig,
+                  context.CurrentTiles);
             context.CurrentTiles.AddRange(newTiles);
             dangerSystem.IncreaseBySpawn();
         }

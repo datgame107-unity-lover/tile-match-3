@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88455a4e8245274eb4880a9ed7de3a5, type: 3}
+  m_Name: ACH_012
+  m_EditorClassIdentifier: Assembly-CSharp::AchievementDataSO
+  id: ACH_012
+  title: "C\xE1nh \u0111\u1ED3ng hoa"
+  description: "Thu th\u1EADp 1000 b\xF4ng hoa."
+  type: 3
+  target: 1000
+  rewardType: 1
+  rewardAmount: 40
+  icon: {fileID: 0}
